@@ -1,0 +1,94 @@
+Compute number of minimum edge numbers to make a graph connected in a undirected graph.
+
+Ask for number of nodes, number of edges and edges.
+Compute number of connected component of the graphs.
+Compute number of minimum needed edge as the one less of number of components.
+Return the value of the minimum needed edge.
+
+
+1.1 Prompt user to enter the number of nodes
+1.2 Read the number of nodes from keyboard
+1.3 Prompt user to enter the number of edges
+1.4 Read the number of edges from keyboard
+1.5 For each edge 
+	1.5.1 Prompt user to enter the two nodes to indicate the edge 
+	1.5.2 Read the two values of the nodes
+	1.5.2 Add other nodes to the both edges adjacency list
+1.6 Initialise the result as the result value to -1
+
+Data Requirements
+Number of nodes - integer value
+Number of edges - integer value
+Adjacency list of nodes - Array of size number of nodes each contains the integer list initially empty
+Result - integer value
+
+2.1 Create an array size of number of nodes to monitor the nodes has visited or not and initialise all to not visited 
+2.2 For each node that is not visited
+	2.2.1 Create a queue and add the node that is not visited and make it visited
+	2.2.2 While queue is not empty
+		2.2.2.1 Get the top value of the queue
+		2.2.2.2 Remove the top value of the queue
+		2.2.2.3 For all the unvisited adjacent nodes of that value from the adjacency list of nodes
+			2.2.2.3.1 Add that adjacent node to the queue
+			2.2.2.3.2 Mark that adjacent node as visited
+	2.2.3 Increment the result by 1
+
+Data Requirements
+queue - queue contains of integer
+
+3.1 Equalize the result to the maximum of 0 and result
+3.2 Prompt the result
+
+Data Requirements
+None
+
+
+#include <bits/stdc++.h>
+#define ll long long
+using namespace std;
+/*
+    *
+    * Hasan Yildirim
+    *
+*/
+int main(){
+	//1
+	printf("Enter the number of nodes(Graph is 0 indexed)\n");
+	int number_of_nodes;
+	scanf("%d" , &number_of_nodes);
+	printf("Enter the number of edges\n");
+	int number_of_edges;
+	scanf("%d" , &number_of_edges);
+	vector<vector<int> > adjacency_list_of_graph;
+	for(int i = 0 ; i < number_of_edges ; i++){
+		int a,b;
+		scanf("%d%d" , &a , &b);
+		adjacency_list_of_graph[a].push_back(b);
+		adjacency_list_of_graph[b].push_back(a);
+	}
+	int result = -1;
+	//2
+	vector<bool> visited(n , false);
+	for(int i = 0 ; i < n ; i++){
+		if(!visited[i]){
+			queue<int> q;
+			q.push_back(i);
+			visited[i] = true;
+			while(!q.isEmpty()){
+				int node = q.top();
+				q.pop();
+				for(int j = 0 ; j < adjacency_list_of_graph[node].size() ; j++){
+					if(!visited[adjacency_list_of_graph[node][j]]){
+						q.push_back(adjacency_list_of_graph[node][j]);
+						visited[adjacency_list_of_graph[node][j]] = true;
+					}
+				}
+			}
+			result++;
+		}
+	}
+	//3
+	result = max(0 , result);
+	printf("The minimum number of edge needed to make the graph connected is %d.\n" , result);
+    return 0;
+}
