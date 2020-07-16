@@ -1,0 +1,36 @@
+Prime Factorization
+
+Given an integer, design a function that it will print all the prime factors of that integer.
+
+Get the integer parameter from the funtion.
+For every integer till the root of the integer, divide the integer to that value till it is not divisible without a reminder and print the value.
+If the reminded integer is bigger than 1, print the reminded value.
+
+F.1 For integers from 2 till square root of the value
+	F.1.1 If the integer is divided the value without any reminder
+		F.1.1.1 Print the integer 
+		F.1.1.2 While the integer divide the value without any reminder
+			F.1.1.2.1 The value is assigned to the division of the value to the integer
+F.2 If the value is greater than 1
+	F.2.1 Print the value
+
+Data Requirements
+
+Counter of for loop - integer value
+
+Implementation
+
+void primeFactorization(int value){
+	for(int i = 2 ; i <= sqrt(value) ; i++){
+		if(!(value%i)){
+			printf("%d " , i);
+			while(!(value%i)){
+				value = value/i;
+			}
+		}
+	}
+	if(value>1){
+		printf("%d " , value);
+	}
+	printf("\n");
+}
