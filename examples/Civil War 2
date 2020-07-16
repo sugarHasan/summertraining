@@ -1,0 +1,45 @@
+Civil War 2
+
+Captain America and Iron Man can not sattle their conflict and Captain wants his revenge after first loss. Hence they will recruit SHIELD agents for their next war. In the next war, who has more agent advantage will win the battle. SHIELD manager is obsessed with odd numbers hence number of agents always an odd number. Also it is hard to manage all the agents together, agents are work with groups. The other manager, who is obsessed with the even numbers, always group the agents that the number of groups is always an even number. Before the second big war, all group of agents lined up. For recruiting a group, it should be either start or end of the line. For example if there is 4 group in the line, 1-2-3-4 you either recruit group 1 or group 4. In this instance if Captain select group 4, Iron Man can choose group 1 or 3 and they move on this selection till the last group. Because of his age, Captain starts to pick first. Also they both extremely smart hence they both play optimally. They are both superheros hence your time is less important than them hence you should return CAPTAIN if Captain wins or IRON MAN if Iron Man wins.
+
+Input:
+
+First line : N integer less than 10^6 that is the number of group of agents.
+Nex line: N consecutive positive integers that the size of the group. Each of the group size is less than 10^18.
+
+Output:
+Print CAPTAIN if Captain wins, IRON MAN if Iron Man wins. 
+
+Example:
+Input:
+4
+2 2 3 40
+Output:
+CAPTAIN
+Explanation: When they play optimally, Captain recruit the group 4 which has 40 agents, Iron Man will recruit 3, Captain recruit 2 and finally Iron Man recruit 2. At the end Captain wins by 42 to 5.
+
+
+Main Algorithm
+1. Print CAPTAIN as Captain always wins if both plays optimally.
+
+Expand 1
+1.1 Print CAPTAIN
+
+Data Requirements
+None
+
+Implementation
+
+#include <bits/stdc++.h>
+#define ll long long
+using namespace std;
+/*
+    *
+    * Hasan Yildirim
+    *
+*/
+int main(){
+	//1
+	printf("CAPTAIN\n");
+    return 0;
+}
