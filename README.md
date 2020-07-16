@@ -1,8 +1,8 @@
 # summertraining
 
 David Davenport
-berke oguz 
-kaan tapucu 
-hasan yildirim
+Berke Oguz 
+Kaan Tapucu 
+Hasan Yildirim
 
 Finally, sorry for me being lazy. :D
