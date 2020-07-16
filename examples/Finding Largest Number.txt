@@ -1,0 +1,31 @@
+Finding largest number in an array
+
+Trace the array for each element and compare them to find the largest one
+
+Example:
+Given Array : [8 , 5 , 16 , 2 , 7]
+Result : 16
+
+Main Algorithm
+1. Create a max value and initialize it to the first element of the array
+2. Compare the value with every other element in the array
+3. If one of the other values is greater then the max value then
+4.Initialize that value as the max value and return it
+
+Function - Parameters: public integer method with an integer array parameter
+
+
+Data Requirements
+Array - integer value
+
+Implementation
+
+  public int getMax(int[] givenArray){ 
+    int maxValue = givenArray[0]; 
+    for(int i=1;i < inputArray.length;i++){ 
+      if(inputArray[i] > maxValue){ 
+         maxValue = givenArray[i]; 
+      } 
+    } 
+    return maxValue; 
+  }
