@@ -1,0 +1,21 @@
+15.07.2020
+13.00 - 14.30
+I search for some pseudo code examples and write one which can be uselful for the project
+
+15.00 - 17.00
+We spend some time to talk about how to design the web page, then decided on doing some mockup pages and talked on them because it is more concrete and easy to understand on some ideas on a template web page.
+
+17.00 - 19.00
+I search for a free mockup tool and create a sample mockup page related to the project so that we can easily communucate what's in our mind
+
+For the future plan, we will decide whether the statements(condition statements, loops etc...) that we drag and drop will be already prepared at the rightmost of the page or user will write them in a blank statement card.
+
+16.07.2020
+10.00 - 14.00
+We talked about some different ideas about the project on whatsapp
+I do some changes on my mockup pages that I don't like and the some feedbacks of my friends
+
+I decided to add a next step button to the project which trace the pseudo code one by one. The color of the related step will change, however, in the condition statements it might be too hard to decide which way the statement goes on(Will the if part or else part works at that step).
+Therefore, we will argue it again and decide what to do about it.
+Most logical idea that we argue from now on is uncompleted statements with some blanks that user will fill and drop the algorithm area.
+   
