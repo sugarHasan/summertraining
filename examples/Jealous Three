@@ -1,0 +1,40 @@
+Jealous Three
+
+Three person is extremely jealous where always one outcast get inside the other two. Three of them has an index value and they can move to the index values that is integer. You are given an array of three and return the value which at most how many times an outcast can move to the middle.
+
+Example:
+
+Given Array : [3,1,4]
+Return Value : 1
+
+Explanation: The outcast has the index value 1 and 4. 1 can not get into middle where 3 and 4 is consecutive. 4 should move to 2 where after their indexes will be 1-2-3 and none of the outcaster can get into the middle. Hence maximum number of time that an outcaster get into the middle is 1.
+
+Main Algorithm
+
+1. Sort the given array
+2. Find the maximum difference between the 1st and 2nd index vs 2nd and 3rd index.
+3. Result is maximum of one less than the maximum difference or 0.
+
+Function - Parameters: An integer array size of 3 which contains the indexes of individuals
+
+F.1 Sort the array
+F.2 Create a result and equal it to the difference of arrays index 1 minus index 0
+F.3 Result is assigned to maximum of itself and the difference of arrays index 2 minus index 1
+F.4 Result is assigned one less than result
+F.5 Result is assigned to maximum of itself and 0
+F.6 Return Result
+
+Data Requirements
+Result - integer value
+
+Implementation
+
+int jealousThree(vector<int> v){
+	sort(v.begin() , v.end());
+	int result;
+	result = v[1] - v[0];
+	result = max(result , v[2] - v[1]);
+	result--;
+	result = max(result , 0);
+	return result;
+}
