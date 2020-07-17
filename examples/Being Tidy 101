@@ -18,8 +18,9 @@ F.5 Return the function as size of array minus result
 
 Implementation
 
-void beingLazy101(vector<int> v){
+int beingLazy101(vector<int> v){
     map<int,int> mp;
+    int n = v.size();
     for(int i = 0 ; i < n ; i++){
         int temp = v[i];
         if(mp[temp-1]){
@@ -36,5 +37,5 @@ void beingLazy101(vector<int> v){
         res = max(res , it->second);
         it++;
     }
-    return v.size()-res;
+    return n-res;
 }
