@@ -1,0 +1,40 @@
+Being Tidy 101
+
+You are given an array which contains n consecutive integers from 1 to n. You need to tidy this array in ascending order but life is not that easy. You will tidy this array by doing operations which in an operation you can select an integer and you can either send it to the beginning or the end of the array. For example, in an array you have [1,3,2,4] and you choose 2 to go in front and it become [2,1,3,4] or to go at the end and it become [1,3,4,2]. You are lazy so if you can calculate the minimum number of operations you will pass this mission to someone else. You need to write a function that takes an array as a parameter and return the minimum number of operations.
+
+Main Algorithm
+
+F.1 Create a map that hashs integer key to an integer value
+F.2 For every index in the array
+	F.2.1 Create a temporary integer value and assign to the value in array
+	F.2.2 If map has one less value of that temporary value
+		F.2.2.1 Map the value one more than the maped value of one less value
+	F.2.3 Else If map has not have one less value of that temporary value
+		F.2.3.1 Map the value as 1
+F.3 Create a variable result and assign it to 0
+F.4 For every mapped value in the hashmap
+	F.4.1 Result is assigned to the maximum of result and mapped value
+F.5 Return the function as size of array minus result
+
+Implementation
+
+void beingLazy101(vector<int> v){
+    map<int,int> mp;
+    for(int i = 0 ; i < n ; i++){
+        int temp = v[i];
+        if(mp[temp-1]){
+            mp[temp] = mp[temp-1]+1;
+        }
+        else{
+            mp[temp] = 1;
+        }
+    }
+	int res = 0;
+    map<int, int>::iterator it = mp.begin();
+    while (it != mp.end())
+    {
+        res = max(res , it->second);
+        it++;
+    }
+    return v.size()-res;
+}
