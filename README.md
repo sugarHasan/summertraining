@@ -5,4 +5,4 @@ Berke Oguz
 Kaan Tapucu 
 Hasan Yildirim
 
-Finally, sorry for me being lazy. :D
+Reviewing the examples.
