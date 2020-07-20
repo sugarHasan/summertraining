@@ -1,0 +1,45 @@
+Even-Odd Number Example
+
+Check whether the given number is even or odd. Then, print results to the screen.
+
+Main Algorithm
+
+1. Ask for & get a number from user
+2. Check the remainder of the given number from division by two
+3. if its reminder is equals to zero then
+3T	report the number is even
+   else
+3F	report the number is odd
+
+Data Requirements
+number - integer variable
+
+Expand 1.
+
+1.1 Prompt user to enter any number
+1.2 Read number from keyboard
+
+Data Requirements
+number - integer variable
+
+Implementation
+
+import java.util.Scanner;
+
+  public static void main(String args[])
+  {
+    int number;
+    System.out.println("Enter an Integer number:");
+
+    //Get the number from user
+    Scanner scan = new Scanner(System.in);
+    number = scan.nextInt();
+
+    /* Check the remainder of the number from division by two
+     *If its remainder is zero then report that number is even
+     * else number is odd*/
+    if ( number % 2 == 0 )
+        System.out.println("The number is even");
+     else
+        System.out.println("The number is odd");
+  }
