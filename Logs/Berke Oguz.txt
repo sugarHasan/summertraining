@@ -18,4 +18,16 @@ I do some changes on my mockup pages that I don't like and the some feedbacks of
 I decided to add a next step button to the project which trace the pseudo code one by one. The color of the related step will change, however, in the condition statements it might be too hard to decide which way the statement goes on(Will the if part or else part works at that step).
 Therefore, we will argue it again and decide what to do about it.
 Most logical idea that we argue from now on is uncompleted statements with some blanks that user will fill and drop the algorithm area.
-   
+
+17.07.2020
+14.00 - 17.00
+Working on react.I examine the codes that we found and try to understand how we will do the implementation. It still seems complicated to design webpage according to mockups that we create.
+
+18.07.2020
+Off day
+
+19.07.2020
+14.00 - 16.00
+I saw the feedback mail. I revise the pseudo code algorithm examples again and think about a simple example to write.
+17.00 - 18.00
+I write a new pseudo algorithm example.
