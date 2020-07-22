@@ -1,3 +1,4 @@
+@author: Berke Oğuz
 Finding largest number in an array
 
 Trace the array for each element and compare them to find the largest one
@@ -7,8 +8,8 @@ Given Array : [8 , 5 , 16 , 2 , 7]
 Result : 16
 
 Main Algorithm
-1. Create a max value and initialize it to the first element of the array
-2. Compare the value with every other element in the array
+1. Create a max value variable and initialize it to the first element of the array
+2. Compare the value for each element with the given array as parameter
 3. If one of the other values is greater then the max value then
 4.Initialize that value as the max value and return it
 
@@ -16,16 +17,28 @@ Function - Parameters: public integer method with an integer array parameter
 
 
 Data Requirements
-Array - integer value
-
+max value - integer value
+given array - integer array
 Implementation
-
+/**
+*Finding Largest Number in an array
+*@author:Berke Oguz
+*/
+public class LargestNum{
   public int getMax(int[] givenArray){ 
-    int maxValue = givenArray[0]; 
-    for(int i=1;i < inputArray.length;i++){ 
-      if(inputArray[i] > maxValue){ 
+    //1. Create a max value variable and initialize it to the first element of the array
+    //variables
+    int maxValue;
+    maxValue = givenArray[0]; 
+    //2. Compare the value for each element in the array
+    for(int i=1;i < givenArray.length;i++){ 
+    //3. If one of the other values is greater then the max value then
+      if(givenArray[i] > maxValue){ 
+	//4.Initialize that value as the max value
          maxValue = givenArray[i]; 
       } 
     } 
+    //and return maxValue
     return maxValue; 
   }
+}
