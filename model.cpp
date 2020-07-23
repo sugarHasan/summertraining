@@ -10,21 +10,27 @@ struct Variable{
 	string implementation;
 	string comment;
 	string variable;
-	Variable(string param){
-		variable = param;
+	int colorId;
+	Variable(string temp , int id){
+		variable = temp;
 		comment = "";
 		implementation = "";
+		colorId = id;
 	}
+	
 };
 struct Constant{
 	string implementation;
 	string comment;
 	string constant;
-	Constant(string temp){
+	int colorId;
+	Constant(string temp , int id){
 		constant = temp;
 		comment = "";
 		implementation = "";
+		colorId = id;
 	}
+	
 };
 struct Step{
 	bool subStep;
@@ -32,33 +38,105 @@ struct Step{
 	string text;
 	string implementation;
 	int indent;
+	map<int,int> variables;
+	map<int,int> constants;
 	Step(){
 		subStep = false;
 		counter = false;
 		implementation = "";
 		indent = 0;
 	}
+	void addVariable(int start , int end , int id){
+		for(int i = start ; i <= end ; i++){
+			variables[i] = id;
+		}
+	}
+	void addConstant(int start , int end , int id){
+		for(int i = start ; i <= end ; i++){
+			constants[i] = id;
+		}
+	}
+	vector<int> colorCharMap(){
+		vector<int> res(text.size());
+		for(int i = 0 ; i < text.size() ; i++){
+			if(variables[i])
+				res[i] = variables[i];
+			if(constants[i])
+				res[i] = constants[i];
+		}
+		return res;
+	}
+
 };
 class Psuedo{
+private:
 	vector<struct Step> steps;
 	vector<struct Variable> variables;
 	vector<struct Constant> constants;
 	int position;
 	bool hideStep;
 	bool hideSubStep;
+	bool isWord(string str){
+		int n = str.size();
+		for(int i = 0 ; i < n ; i++){
+			if(str[i] == ' ')
+				return false;
+		}
+		return true;
+	}
+	bool sameConstant(struct Constant temp , string str){
+		if(!temp.constant.compare(str))
+			return true;
+		return false;
+	}
+	bool sameVariable(struct Variable temp , string str){
+		if(!temp.variable.compare(str))
+			return true;
+		return false;
+	}
+public:
 	Psuedo(){
 		position = -1;
 		hideStep = false;
 		hideSubStep = false;
 	}
+	bool addConstant(string add , int id){ // id should be start from 1 and increase for every cons and variable 
+		//if add is not a word return false
+		if(!isWord(add))
+			return false;
+		//if add is a variable or already declared constant return false
+		for(int i = 0 ; i < variables.size() ; i++){
+			if(sameVariable(variables[i] , add))
+				return false;
+		}
+		for(int i = 0 ; i < constants.size() ; i++){
+			if(sameConstant(constants[i] , add))
+				return false;
+		}
+		//create and add the constant 
+		struct Constant temp(add , id); 
+		constants.push_back(temp);
+		//change all the steps color map
+		for(int i = 0 ; i < steps.size() ; i++){
+			//get every word from the string
+
+		}	
+		return true;
+	}
+	void addVariable(string add , int id){
+		struct Variable temp(add , id);
+		variables.push_back(temp);
+	}
 	void changeStepShowing(){
-		hideStep = ~hideStep;
+		hideStep = !hideStep;
 	}
 	void changeSideStepShowing(){
-		hideSubStep = ~hideSubStep;
+		hideSubStep = !hideSubStep;
 	}
 	void createNew(){
 		steps.clear();
+		variables.clear();
+		constants.clear();
 		position = -1;
 		hideStep = false;
 		hideSubStep = false;
@@ -73,10 +151,8 @@ class Psuedo{
 	void deleteStep(int index){
 		steps.erase(steps.begin() + index);
 	}
-	void addConstant(string add){
-		Constant cons(add);
-		constants.push_back(cons);
-	}
+	
+	
 	void increaseIndent(int index){
 		steps[index].indent += 1;
 	}
@@ -84,7 +160,7 @@ class Psuedo{
 		steps[index].indent += 1;
 	}
 	string createTemplate(){
-		string res = "#include <bits/stdc++.h>\n#define ll long long\nusing namespace std;\n/*\n*\n* Hasan Yildirim\n*\n*/\nint main(){\n\t";
+		string res = "#include <bits/stdc++.h>\n#define ll long long\nusing namespace std;\n/*\n*\n* @author\n*\n*/\nint main(){\n\t";
 		
 		res+= "//Constants\n\t";
 		for(int i = 0 ; i < constants.size() ; i++){
@@ -140,15 +216,16 @@ class Psuedo{
 		steps.push_back(add);
 	}
 	void save(){
-		//Save it to a txt or server, can do txt easily in minutes
+		//Save it to a txt or server, can do txt implementation easily in minutes
 	}
-	string load(){
+	void load(){
 		//same as save
-		return "";
 	}
 
 };
 int main(){
-
+	struct Variable temp("deneme" , 1);
+	cout<<temp.variable<<endl;
+	cout<<temp.comment<<endl;
     return 0;
 }
