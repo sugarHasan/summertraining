@@ -32,7 +32,8 @@ struct Constant{
 	}
 	
 };
-struct Step{
+class Step{
+public:
 	bool subStep;
 	bool counter;
 	string text;
@@ -68,7 +69,7 @@ struct Step{
 	}
 
 };
-class Psuedo{
+class Model{
 private:
 	vector<struct Step> steps;
 	vector<struct Variable> variables;
@@ -95,10 +96,30 @@ private:
 		return false;
 	}
 public:
-	Psuedo(){
+	Model(){
 		position = -1;
 		hideStep = false;
 		hideSubStep = false;
+	}
+	int getStepSize(){
+		return steps.size();
+	}
+	void changePosition(int index1 , int index2){ // index1 to one before index2
+		class Step temp = steps[index1];
+		if(index1 == index2)
+			return;
+		if(index1 > index2){
+			for(int i = index1 ; i > index2 ; i--){
+				steps[i] = steps[i-1];
+			}
+			steps[index2] = temp;
+		}
+		else{
+			for(int i = index1 ; i < index2-1 ; i++){
+				steps[i] = steps[i+1];
+			}
+			steps[index2-1] = temp;
+		}
 	}
 	bool addConstant(string add , int id){ // id should be start from 1 and increase for every cons and variable 
 		//if add is not a word return false
@@ -152,7 +173,9 @@ public:
 		steps.erase(steps.begin() + index);
 	}
 	
-	
+	void implementStep(int index , string implementation){
+		steps[index].implementation = implementation;
+	}
 	void increaseIndent(int index){
 		steps[index].indent += 1;
 	}
@@ -186,10 +209,17 @@ public:
 		for(int i = 0 ; i < steps.size() ; i++){
 			if(!steps[i].subStep){
 				res += "/*\n\t * ";
+				for(int j = 0 ; j < steps[i].indent ; j++){
+					res += "\t";
+				}
 				res += steps[i].text;
 				res += "\n\t*/\n\t";
 			}
 			else{
+				for(int j = 0 ; j < steps[i].indent ; j++){
+					res += "\t";
+				}
+				res += "//";
 				res += steps[i].text;
 				res += "\n\t";
 			}
@@ -221,11 +251,19 @@ public:
 	void load(){
 		//same as save
 	}
+	void changePositionToLast(int index){
+		this->changePosition(index , this->getStepSize());
+	}
 
 };
 int main(){
-	struct Variable temp("deneme" , 1);
-	cout<<temp.variable<<endl;
-	cout<<temp.comment<<endl;
+	class Model deneme;
+	deneme.addStep("Step 1: Read an integer from user");
+	deneme.addSubStep("1.1 Read from user");
+	deneme.addSubStep("1.2 Assign it to an integer called n");
+	deneme.implementStep(2 , "int a;");
+	deneme.increaseIndent(2);
+	deneme.changePositionToLast(1);
+	cout<<deneme.createTemplate()<<endl;
     return 0;
 }
