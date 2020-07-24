@@ -31,3 +31,11 @@ Off day
 I saw the feedback mail. I revise the pseudo code algorithm examples again and think about a simple example to write.
 17.00 - 18.00
 I write a new pseudo algorithm example.
+
+23.07.2020
+I started to coding of UI part. I add the buttons learn how to do event handling and do a test of event handling of buttons. I can manage to work buttons,so,I will fill the button click functions with their proper working codes after implementing the main algorithm part. However, I can't put the buttons exactly where I want.Therefore, I am working on css part of the project to put the buttons to relevant places.
+
+
+24.07.2020
+We found a really good website about the project. There is a nice coding about indentation and algorithm part. At first, we are trying to understand the code while it seems a bit complicated. Since we are a bit unfamiliar with react, js and css the progress goes somehow slower than I thought. However, you can be sure that we are working on it. Hopefully, we will implement something similar to our website soon.
+ 
