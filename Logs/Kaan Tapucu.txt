@@ -7,3 +7,20 @@ Done research, deside design plan
 16.07.2020
 10:00 - 14:00
 Done mockups, made few design changes in plan
+22:00 - 2:00
+Zoom meeting planning
+
+17.07.2020
+Zoom meeting, started the work on react with berke
+
+22.07.2020
+Created mockups
+
+23.07.2020
+20:00 - 4:00
+Worked on react, I find a template and tried implement it with our c++ code
+https://github.com/frontend-collective/react-sortable-tree
+
+24.07.2020
+13:00 - 17:00
+Me and berke give example to our c++ code while doing zoom meeting and still trying to implement template
