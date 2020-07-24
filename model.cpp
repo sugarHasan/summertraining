@@ -265,5 +265,55 @@ int main(){
 	deneme.increaseIndent(2);
 	deneme.changePositionToLast(1);
 	cout<<deneme.createTemplate()<<endl;
+	
+	//Exam Average Problem
+	class Model test;
+	test.addStep("Step 1: Ask for and get a number from exam sheets from user");
+	
+	test.addSubStep("1.1 Prompt user to enter number of exam sheets");
+	test.increaseIndent(1);
+	test.implementStep(1 , "System.out.print( \"Enter the number of exam sheets to process \");");
+	
+	test.addSubStep("1.2 Read number of exam sheets from keyboard");
+	test.increaseIndent(2);
+	test.implementStep(2 , "numberOfExamSheets = scan.nextInt();");
+	
+	test.addStep("Step 2: For the given number of exam sheets, read each score and use to calculate sum of scores");
+	
+	test.addSubStep("2.1 Initialise sum of scores so far to 0");
+	test.implementStep(4 , "sumOfScoresSoFar = 0;");
+	test.increaseIndent(4);
+	
+	test.addSubStep("2.2 for each sheet from 1 to number of exam sheets");
+	test.increaseIndent(5);
+	test.implementStep(5 , "for ( sheet = 1; sheet <= numberOfExamSheets; sheet = sheet + 1) {");
+	
+	test.addSubStep("2.2.1 prompt user for exam score");
+	test.increaseIndent(6);
+	test.increaseIndent(6);
+	test.implementStep(6 , "System.out.print( \"Enter exam score \");");
+	
+	test.addSubStep("2.2.2 get the exam score for the current sheet");
+	test.increaseIndent(7);
+	test.increaseIndent(7);
+	test.implementStep(7 , "examScore = scan.nextInt();");
+	
+	test.addSubStep("2.2.3 add exam score to sum of scores so far");
+	test.increaseIndent(8);
+	test.increaseIndent(8);
+	test.implementStep(8 , "sumOfScoresSoFar = sumOfScoresSoFar + examScore; }");
+	
+	test.addSubStep("2.3    sum of scores is sum of scores so far");
+	test.increaseIndent(9);
+	test.implementStep(9, "sumOfScores = sumOfScoresSoFar;");
+	
+	test.addStep("3. Compute average as sum of scores divided by number of exam sheets");
+	test.implementStep(10, "average = sumOfScores / numberOfExamSheets;");
+	
+	test.addStep("4. Report average");
+	test.implementStep(11, "System.out.println( \"The average for the exam is \" + average);");
+	//test.changePositionToLast(1);
+	cout<<test.createTemplate()<<endl;
+	
     return 0;
 }
