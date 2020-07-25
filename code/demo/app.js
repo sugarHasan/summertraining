@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Children } from "react";
 //import SortableTree, { addNodeUnderParent, removeNodeAtPath } from '../src';
 import SortableTree, {
   addNodeUnderParent,
@@ -10,12 +10,12 @@ import SortableTree, {
 } from "react-sortable-tree";
 import CustomTheme from "../index";
 import "./app.css";
+import ReactDOM from "react-dom";
+import TextareaAutosize from "react-autosize-textarea";
 
 const initialData = [
-  { id: "1", name: "N1", parent: null },
-  { id: "2", name: "N2", parent: null },
-  { id: "3", name: "N3", parent: 2 },
-  { id: "4", name: "N4", parent: 3 },
+  { id: "1", name: "", parent: null, isMain: true },
+  { id: "2", name: "", parent: null, isMain: true },
 ];
 
 class App extends Component {
@@ -61,12 +61,7 @@ class App extends Component {
   }
 
   render() {
-    const {
-      treeData,
-      searchString,
-      searchFocusIndex,
-      searchFoundCount,
-    } = this.state;
+    const { searchString, searchFocusIndex, searchFoundCount } = this.state;
 
     const getNodeKey = ({ treeIndex }) => treeIndex;
 
@@ -77,12 +72,10 @@ class App extends Component {
     }).map(({ node, path }) => ({
       id: node.id,
       name: node.name,
-
       // The last entry in the path is this node's key
       // The second to last entry (accessed here) is the parent node's key
       parent: path.length > 1 ? path[path.length - 2] : null,
     }));
-
     const alertNodeInfo = ({ node, path, treeIndex }) => {
       const objectString = Object.keys(node)
         .map((k) =>
@@ -124,7 +117,7 @@ class App extends Component {
         style={{ display: "flex", flexDirection: "column", height: "100vh" }}
       >
         <div style={{ flex: "0 0 auto", padding: "0 15px" }}>
-          <h3>Full Node Drag Theme</h3>
+          <h3>Pseudocode Designer</h3>
           <button onClick={this.expandAll}>Expand All</button>
           <button onClick={this.collapseAll}>Collapse All</button>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -135,8 +128,7 @@ class App extends Component {
             }}
           >
             <label htmlFor="find-box">
-              Search:&nbsp;
-              <input
+              <TextareaAutosize
                 id="find-box"
                 type="text"
                 placeholder="Search..."
@@ -191,9 +183,15 @@ class App extends Component {
             }
             generateNodeProps={({ node, path }) => ({
               title: (
-                <input
+                <TextareaAutosize
                   style={{ fontSize: "1.1rem" }}
                   value={node.name}
+                  placeholder="Enter Code Here..."
+                  /*
+                  onResize={(event) => {
+                    console.log(event.type);
+                  }}
+                  */
                   onChange={(event) => {
                     const name = event.target.value;
 
@@ -219,9 +217,10 @@ class App extends Component {
                         getNodeKey,
                         newNode: {
                           title: (
-                            <input
+                            <TextareaAutosize
                               style={{ fontSize: "1.1rem" }}
                               value={node.name}
+                              placeholder="Enter Code Here..."
                               onChange={(event) => {
                                 const name = event.target.value;
 
@@ -236,13 +235,21 @@ class App extends Component {
                               }}
                             />
                           ),
+                          id:
+                            //(node.children == undefined ? "     " : "") +
+                            "\n.\n" +
+                            (node.id +
+                              "." +
+                              (node.children == undefined
+                                ? 1
+                                : node.children.length + 1)),
                         },
                         addAsFirstChild: state.addAsFirstChild,
                       }).treeData,
                     }))
                   }
                 >
-                  Add Child
+                  Add Sup Step
                 </button>,
                 <button
                   onClick={() =>
@@ -266,8 +273,9 @@ class App extends Component {
             this.setState((state) => ({
               treeData: state.treeData.concat({
                 title: (
-                  <input
+                  <TextareaAutosize
                     style={{ fontSize: "1.1rem" }}
+                    placeholder="Enter Code Here..."
                     //value={node.name}
                     onChange={(event) => {
                       const name = ""; //event.target.value;
@@ -288,7 +296,7 @@ class App extends Component {
             }))
           }
         >
-          Add more
+          Add Main Step
         </button>
         <br />
         <label htmlFor="addAsFirstChild">
@@ -310,7 +318,7 @@ class App extends Component {
           <ul>
             {flatData.map(({ id, name, parent }) => (
               <li key={id}>
-                line: {id}, code: {name}, parent: {parent || "null"}
+                //{id}, code: {name}, parent: {parent || "null"}
               </li>
             ))}
           </ul>
