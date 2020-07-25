@@ -1,4 +1,4 @@
-To install and run program follow those steps in the terminal:
+To install and run program follow these steps in the terminal:
 
 npm install react-sortable-tree --save
 
