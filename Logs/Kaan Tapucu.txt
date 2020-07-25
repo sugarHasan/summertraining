@@ -24,3 +24,18 @@ https://github.com/frontend-collective/react-sortable-tree
 24.07.2020
 13:00 - 17:00
 Me and berke give example to our c++ code while doing zoom meeting and still trying to implement template
+
+20:00 - 4:00
+Able to run project in localhost. 
+Add and remove pseudocode feature is added.
+Adding main and sub steps are added.
+Search bar is added.
+Still a lot of bugs but working on it.
+
+25.07.2020
+12:00 - 24:00
+Do lots of tracing in code to understand functions. Although project is black box, most functions that we need are not implemented. So, our progress will be slowed little bit.
+Resizeable text are is added but it has bugs.
+Step numbers, parent steps and codes are printed in below. Parent steps and codes are printed in real time without delay. However, Step numbers is really buggy. I am working on it.
+Read me file added to installion guide.
+
