@@ -12,10 +12,12 @@ import CustomTheme from "../index";
 import "./app.css";
 import ReactDOM from "react-dom";
 import TextareaAutosize from "react-autosize-textarea";
+import { node } from "prop-types";
 
 const initialData = [
   { id: "1", name: "", parent: null, isMain: true },
   { id: "2", name: "", parent: null, isMain: true },
+  { id: "3", name: "", parent: null, isMain: true },
 ];
 
 class App extends Component {
@@ -26,8 +28,13 @@ class App extends Component {
       searchString: "",
       searchFocusIndex: 0,
       searchFoundCount: null,
+      mainStepsearchFoundCount: null,
       treeData: getTreeFromFlatData({
-        flatData: initialData.map((node) => ({ ...node, title: node.name })),
+        flatData: initialData.map((node) => ({
+          ...node,
+          title: node.name,
+          isMain: node.isMain,
+        })),
         getKey: (node) => node.id, // resolve a node's key
         getParentKey: (node) => node.parent, // resolve a node's parent's key
         rootKey: null, // The value of the parent key when there is no parent (i.e., at root level)
@@ -61,7 +68,13 @@ class App extends Component {
   }
 
   render() {
-    const { searchString, searchFocusIndex, searchFoundCount } = this.state;
+    const {
+      searchString,
+      searchFocusIndex,
+      searchFoundCount,
+      mainStepFocusIndex,
+      mainStepsearchFoundCount,
+    } = this.state;
 
     const getNodeKey = ({ treeIndex }) => treeIndex;
 
@@ -72,6 +85,7 @@ class App extends Component {
     }).map(({ node, path }) => ({
       id: node.id,
       name: node.name,
+      isMain: node.isMain,
       // The last entry in the path is this node's key
       // The second to last entry (accessed here) is the parent node's key
       parent: path.length > 1 ? path[path.length - 2] : null,
@@ -95,6 +109,8 @@ class App extends Component {
     const customSearchMethod = ({ node, searchQuery }) =>
       searchQuery &&
       node.name.toLowerCase().indexOf(searchQuery.toLowerCase()) > -1;
+
+    const countMainMethod = ({ node }) => node.isMain == true;
 
     const selectPrevMatch = () =>
       this.setState({
@@ -156,10 +172,12 @@ class App extends Component {
             </button>
 
             <span>
-              &nbsp;
+              &nbsp;Index:&nbsp;
               {searchFoundCount > 0 ? searchFocusIndex + 1 : 0}
-              &nbsp;/&nbsp;
+              &nbsp;Total Found:&nbsp;
               {searchFoundCount || 0}
+              &nbsp;/ Main Step Number: &nbsp;
+              {mainStepsearchFoundCount || 0}
             </span>
           </form>
         </div>
@@ -219,7 +237,7 @@ class App extends Component {
                           title: (
                             <TextareaAutosize
                               style={{ fontSize: "1.1rem" }}
-                              value={node.name}
+                              value={""}
                               placeholder="Enter Code Here..."
                               onChange={(event) => {
                                 const name = event.target.value;
@@ -252,6 +270,7 @@ class App extends Component {
                   Add Sup Step
                 </button>,
                 <button
+                  //onClick={countMainMethod}
                   onClick={() =>
                     this.setState((state) => ({
                       treeData: removeNodeAtPath({
@@ -268,6 +287,19 @@ class App extends Component {
             })}
           />
         </div>
+        <div style={{ flex: "0 0 0%", padding: "0 0 0 0px" }}>
+          <SortableTree
+            // count main steps
+            treeData={this.state.treeData}
+            onChange={(treeData) => this.setState({ treeData })}
+            searchMethod={countMainMethod}
+            searchFinishCallback={(matches) =>
+              this.setState({
+                mainStepsearchFoundCount: matches.length,
+              })
+            }
+          />
+        </div>
         <button
           onClick={() =>
             this.setState((state) => ({
@@ -276,9 +308,9 @@ class App extends Component {
                   <TextareaAutosize
                     style={{ fontSize: "1.1rem" }}
                     placeholder="Enter Code Here..."
-                    //value={node.name}
+                    value={""}
                     onChange={(event) => {
-                      const name = ""; //event.target.value;
+                      const name = event.target.value;
 
                       this.setState((state) => ({
                         treeData: changeNodeAtPath({
@@ -291,7 +323,10 @@ class App extends Component {
                     }}
                   />
                 ),
+                id: mainStepsearchFoundCount + 1,
+                // calismiyor parent ve isMain
                 parent: null,
+                isMain: true,
               }),
             }))
           }
