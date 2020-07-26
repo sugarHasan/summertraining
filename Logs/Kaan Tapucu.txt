@@ -39,3 +39,8 @@ Resizeable text are is added but it has bugs.
 Step numbers, parent steps and codes are printed in below. Parent steps and codes are printed in real time without delay. However, Step numbers is really buggy. I am working on it.
 Read me file added to installion guide.
 
+26.07.2020
+23:00 - 1:30
+Main Step Count function is added but it is not refreshing when we delete node. Reason why it is not refreshing is not due to us. I implemented this method with search library which is also not refreshing when you delete node. It refreshs when you change search text. 
+Fix a bug which is when substep is created, its text same as parent.
+
