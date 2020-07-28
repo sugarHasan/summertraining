@@ -39,3 +39,19 @@ I started to coding of UI part. I add the buttons learn how to do event handling
 24.07.2020
 We found a really good website about the project. There is a nice coding about indentation and algorithm part. At first, we are trying to understand the code while it seems a bit complicated. Since we are a bit unfamiliar with react, js and css the progress goes somehow slower than I thought. However, you can be sure that we are working on it. Hopefully, we will implement something similar to our website soon.
  
+25.07.2020
+10.30 - 13.00 & 14.00 - 17.00
+I looked at the code and tried to understand it. I started to implementation of the UI part. We are working simultanously with Kaan while implementing the view of the webpage while Hasan is working on the background(Model) of the project.
+We can manage to implement the tree structured algorithm part to the project and add main part and substep parts to the algorithm lines. 
+26.07.2020
+15.00 - 19.00 & 22.00 - 23.30
+I worked on printing part of the project. We can add main steps to the algorithm, however, the numbering of the printing part is not working correctly. I found the error. In the main step part, node.id in that function seems undefined. However, I could not manage to fix it even if I tried too much.
+
+27.07.2020
+16.30 - 20.00 & 22.00 - 23.30
+After the zoom meeting, I started to research about the controller part of the project. I researched and learn how to connect model and view classes with controller. I tried to move some code segments that we implemented in the app.js(view) to this controller file, however, I will not do it for now.The reason is that every code segment is related to each other and when I tried to move them to another file, it crushed everytime somehow. I hope I will be able to implement  them after connecting the new model classes with the view.  
+
+28.07.2020
+12.00 - 17.30
+Process was a little bit slow for today. We all are trying to fixin some errors of our parts. If we can manage to correct them, I hope I can connect the UI and background of the project.
+I am still waiting for the completing the other parts of to project and learning about using functions clearly in order to make the code more clear and understandable.
