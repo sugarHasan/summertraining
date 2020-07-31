@@ -44,3 +44,7 @@ Read me file added to installion guide.
 Main Step Count function is added but it is not refreshing when we delete node. Reason why it is not refreshing is not due to us. I implemented this method with search library which is also not refreshing when you delete node. It refreshs when you change search text. 
 Fix a bug which is when substep is created, its text same as parent.
 
+29.07.2020
+20:00 - 4:00
+I partly fixed id printing problem. I fix same part of it but still it is not working correctly. Also, it refresh data with delay. It shows previous step results. I spend a lot of time but still we dont have model and controller classes so it is really hard to implement without them.
+Also, I tried to implement special if else steps but drag and drop has some problem in template so I have started to watching react-dnd tutorials to fix problems
