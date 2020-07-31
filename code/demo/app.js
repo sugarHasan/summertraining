@@ -7,17 +7,68 @@ import SortableTree, {
   changeNodeAtPath,
   getFlatDataFromTree,
   getTreeFromFlatData,
+  SortableTreeWithoutDndContext,
 } from "react-sortable-tree";
 import CustomTheme from "../index";
 import "./app.css";
 import ReactDOM from "react-dom";
 import TextareaAutosize from "react-autosize-textarea";
 import { node } from "prop-types";
+import PropTypes from "prop-types";
+import { DndProvider, DragSource } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
+// -------------------------
+// Create an drag source component that can be dragged into the tree
+// https://react-dnd.github.io/react-dnd/docs-drag-source.html
+// -------------------------
+// This type must be assigned to the tree via the `dndType` prop as well
+const externalNodeType = "yourNodeType";
+const externalNodeSpec = {
+  // This needs to return an object with a property `node` in it.
+  // Object rest spread is recommended to avoid side effects of
+  // referencing the same object in different trees.
+  beginDrag: (componentProps) => ({ node: { ...componentProps.node } }),
+};
+const externalNodeCollect = (connect /* , monitor */) => ({
+  connectDragSource: connect.dragSource(),
+  // Add props via react-dnd APIs to enable more visual
+  // customization of your component
+  // isDragging: monitor.isDragging(),
+  // didDrop: monitor.didDrop(),
+});
+class externalNodeBaseComponent extends Component {
+  render() {
+    const { connectDragSource, node } = this.props;
+
+    return connectDragSource(
+      <div
+        style={{
+          display: "inline-block",
+          padding: "3px 5px",
+          background: "blue",
+          color: "white",
+        }}
+      >
+        {node.title}
+      </div>,
+      { dropEffect: "copy" }
+    );
+  }
+}
+externalNodeBaseComponent.propTypes = {
+  node: PropTypes.shape({ title: PropTypes.string }).isRequired,
+  connectDragSource: PropTypes.func.isRequired,
+};
+const YourExternalNodeComponent = DragSource(
+  externalNodeType,
+  externalNodeSpec,
+  externalNodeCollect
+)(externalNodeBaseComponent);
 const initialData = [
+  { id: "0", name: "", parent: null, isMain: true },
   { id: "1", name: "", parent: null, isMain: true },
   { id: "2", name: "", parent: null, isMain: true },
-  { id: "3", name: "", parent: null, isMain: true },
 ];
 
 class App extends Component {
@@ -25,10 +76,16 @@ class App extends Component {
     super(props);
 
     this.state = {
+      mainsearchString: "",
       searchString: "",
       searchFocusIndex: 0,
       searchFoundCount: null,
       mainStepsearchFoundCount: null,
+      lastMovePrevPath: null,
+      lastMoveNextPath: null,
+      lastMoveNode: null,
+      parentNode: null,
+
       treeData: getTreeFromFlatData({
         flatData: initialData.map((node) => ({
           ...node,
@@ -74,7 +131,17 @@ class App extends Component {
       searchFoundCount,
       mainStepFocusIndex,
       mainStepsearchFoundCount,
+      lastMovePrevPath,
+      lastMoveNextPath,
+      lastMoveNode,
+      parentNode,
+      mainsearchString,
     } = this.state;
+
+    const recordCall = (name, args) => {
+      // eslint-disable-next-line no-console
+      console.log(`${name} called with arguments:`, args);
+    };
 
     const getNodeKey = ({ treeIndex }) => treeIndex;
 
@@ -110,7 +177,17 @@ class App extends Component {
       searchQuery &&
       node.name.toLowerCase().indexOf(searchQuery.toLowerCase()) > -1;
 
-    const countMainMethod = ({ node }) => node.isMain == true;
+    const findMain = () => {
+      var temp2 = 0;
+      for (var i = 0; i < flatData.length; i++) {
+        if (flatData[i].isMain) temp2++;
+      }
+      this.setState({
+        mainStepsearchFoundCount: temp2,
+      });
+    };
+
+    const countMainMethod = ({ node, searchQuery }) => node.isMain == true;
 
     const selectPrevMatch = () =>
       this.setState({
@@ -181,7 +258,6 @@ class App extends Component {
             </span>
           </form>
         </div>
-
         <div style={{ flex: "1 0 50%", padding: "0 0 0 15px" }}>
           <SortableTree
             theme={CustomTheme}
@@ -192,6 +268,62 @@ class App extends Component {
             searchFocusOffset={searchFocusIndex}
             style={{ width: "600px" }}
             rowHeight={45}
+            dndType={externalNodeType}
+            onMoveNode={(args) => {
+              recordCall("onMoveNode", args);
+              const { prevPath, nextPath, node, nextParentNode } = args;
+              this.setState({
+                lastMovePrevPath: prevPath,
+                lastMoveNextPath: nextPath,
+                lastMoveNode: node,
+                parentNode: nextParentNode,
+                mainsearchString: "",
+              });
+
+              var temp2 = 0;
+              for (var i = 0; i < flatData.length; i++) {
+                if (flatData[i].isMain) temp2++;
+              }
+              this.setState({
+                mainStepsearchFoundCount: temp2,
+              });
+
+              node.id = nextPath.join(".");
+              node.parent = nextParentNode;
+              //treeData;
+              if (nextParentNode == null) {
+                node.isMain = true;
+              } else {
+                node.isMain = false;
+              }
+
+              if (
+                nextParentNode != null &&
+                nextParentNode.children != null &&
+                nextParentNode.children.length > 1 &&
+                nextParentNode.children != undefined
+              ) {
+                var temp = parseInt(node.id.slice(-1));
+                for (var i = temp; i < nextParentNode.children.length; i++) {
+                  var temp2 =
+                    parseInt(nextParentNode.children[i].id.slice(-1)) + 1;
+                  nextParentNode.children[i].id =
+                    nextParentNode.children[i].id.substring(
+                      0,
+                      nextParentNode.children[i].id.length - 1
+                    ) + temp2;
+                }
+              } else if (
+                nextParentNode != null &&
+                nextParentNode.children.length <= 1 &&
+                nextParentNode.children != undefined
+              ) {
+                node.id = node.id.substring(0, node.id.length - 1) + 1;
+              }
+            }}
+            onDragStateChanged={(args) =>
+              recordCall("onDragStateChanged", args)
+            }
             searchFinishCallback={(matches) =>
               this.setState({
                 searchFoundCount: matches.length,
@@ -226,6 +358,7 @@ class App extends Component {
               ),
               buttons: [
                 <button
+                  onClick={findMain}
                   onClick={() =>
                     this.setState((state) => ({
                       treeData: addNodeUnderParent({
@@ -241,8 +374,8 @@ class App extends Component {
                               placeholder="Enter Code Here..."
                               onChange={(event) => {
                                 const name = event.target.value;
-
                                 this.setState((state) => ({
+                                  mainsearchString: event.target.value,
                                   treeData: changeNodeAtPath({
                                     treeData: state.treeData,
                                     path,
@@ -255,12 +388,13 @@ class App extends Component {
                           ),
                           id:
                             //(node.children == undefined ? "     " : "") +
-                            "\n.\n" +
-                            (node.id +
-                              "." +
-                              (node.children == undefined
-                                ? 1
-                                : node.children.length + 1)),
+                            //"\n.\n" +
+                            node.id +
+                            "." +
+                            (node.children == undefined
+                              ? 1
+                              : node.children.length + 1),
+                          parent: node,
                         },
                         addAsFirstChild: state.addAsFirstChild,
                       }).treeData,
@@ -270,7 +404,7 @@ class App extends Component {
                   Add Sup Step
                 </button>,
                 <button
-                  //onClick={countMainMethod}
+                  onClick={findMain}
                   onClick={() =>
                     this.setState((state) => ({
                       treeData: removeNodeAtPath({
@@ -287,12 +421,20 @@ class App extends Component {
             })}
           />
         </div>
+        {lastMoveNode && (
+          <div>
+            Node &quot;{lastMoveNode.title}&quot; moved from path [
+            {lastMovePrevPath.join(",")}] to path [{lastMoveNextPath.join(",")}
+            ].
+          </div>
+        )}
         <div style={{ flex: "0 0 0%", padding: "0 0 0 0px" }}>
           <SortableTree
             // count main steps
             treeData={this.state.treeData}
             onChange={(treeData) => this.setState({ treeData })}
             searchMethod={countMainMethod}
+            searchQuery={mainsearchString}
             searchFinishCallback={(matches) =>
               this.setState({
                 mainStepsearchFoundCount: matches.length,
@@ -301,6 +443,7 @@ class App extends Component {
           />
         </div>
         <button
+          onClick={findMain}
           onClick={() =>
             this.setState((state) => ({
               treeData: state.treeData.concat({
@@ -323,8 +466,7 @@ class App extends Component {
                     }}
                   />
                 ),
-                id: mainStepsearchFoundCount + 1,
-                // calismiyor parent ve isMain
+                id: mainStepsearchFoundCount,
                 parent: null,
                 isMain: true,
               }),
@@ -347,7 +489,6 @@ class App extends Component {
             }
           />
         </label>
-
         <div>
           ↓PseudoCode↓
           <ul>
