@@ -17,7 +17,7 @@ import { node } from "prop-types";
 import PropTypes from "prop-types";
 import { DndProvider, DragSource } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-
+import Controller from "./controller/Controller";
 // -------------------------
 // Create an drag source component that can be dragged into the tree
 // https://react-dnd.github.io/react-dnd/docs-drag-source.html
@@ -79,6 +79,7 @@ class App extends Component {
       mainsearchString: "",
       searchString: "",
       searchFocusIndex: 0,
+      next: 0,
       searchFoundCount: null,
       mainStepsearchFoundCount: null,
       lastMovePrevPath: null,
@@ -101,6 +102,7 @@ class App extends Component {
     this.updateTreeData = this.updateTreeData.bind(this);
     this.expandAll = this.expandAll.bind(this);
     this.collapseAll = this.collapseAll.bind(this);
+    this.nextStep = this.nextStep.bind(this);
   }
 
   updateTreeData(treeData) {
@@ -123,12 +125,15 @@ class App extends Component {
   collapseAll() {
     this.expand(false);
   }
-
+  nextStep() {
+    this.setState({ next: this.state.next + 1 });
+  }
   render() {
     const {
       searchString,
       searchFocusIndex,
       searchFoundCount,
+      next,
       mainStepFocusIndex,
       mainStepsearchFoundCount,
       lastMovePrevPath,
@@ -144,7 +149,7 @@ class App extends Component {
     };
 
     const getNodeKey = ({ treeIndex }) => treeIndex;
-
+    const COLORS = ["Yellow", "Red", "Black", "Green", "Blue"];
     const flatData = getFlatDataFromTree({
       treeData: this.state.treeData,
       getNodeKey: ({ node }) => node.id, // This ensures your "id" properties are exported in the path
@@ -157,20 +162,6 @@ class App extends Component {
       // The second to last entry (accessed here) is the parent node's key
       parent: path.length > 1 ? path[path.length - 2] : null,
     }));
-    const alertNodeInfo = ({ node, path, treeIndex }) => {
-      const objectString = Object.keys(node)
-        .map((k) =>
-          k === "children" ? "children: Array" : `${k}: '${node[k]}'`
-        )
-        .join(",\n   ");
-
-      global.alert(
-        "Info passed to the icon and button generators:\n\n" +
-          `node: {\n   ${objectString}\n},\n` +
-          `path: [${path.join(", ")}],\n` +
-          `treeIndex: ${treeIndex}`
-      );
-    };
 
     // Case insensitive search of `node.name`
     const customSearchMethod = ({ node, searchQuery }) =>
@@ -213,6 +204,8 @@ class App extends Component {
           <h3>Pseudocode Designer</h3>
           <button onClick={this.expandAll}>Expand All</button>
           <button onClick={this.collapseAll}>Collapse All</button>
+          <button onClick={this.nextStep}>Next Step</button>
+          <Controller />
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <form
             style={{ display: "inline-block" }}
@@ -332,6 +325,12 @@ class App extends Component {
               })
             }
             generateNodeProps={({ node, path }) => ({
+              style: {
+                boxShadow:
+                  next === 0
+                    ? `0 0 0 10px ${COLORS[next + 1]}`
+                    : `0 0 0 10px ${COLORS[next + 3]}`,
+              },
               title: (
                 <TextareaAutosize
                   style={{ fontSize: "1.1rem" }}
