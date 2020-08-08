@@ -48,3 +48,11 @@ Fix a bug which is when substep is created, its text same as parent.
 20:00 - 4:00
 I partly fixed id printing problem. I fix same part of it but still it is not working correctly. Also, it refresh data with delay. It shows previous step results. I spend a lot of time but still we dont have model and controller classes so it is really hard to implement without them.
 Also, I tried to implement special if else steps but drag and drop has some problem in template so I have started to watching react-dnd tutorials to fix problems
+
+06.08.2020
+Watch some youtube tutorials(bald guy which glasses). I dont know how much time I spend on it. I have tried to understand drag and drop (dnd). Didnt do implementation just learning.
+
+07.08.2020
+19:00 - 3:00
+I fixed the problem of main step count. It is counting correctly right now. Also, sir If you are reading this, you seams like you think it is easy thing, but I swear it is not easy thing. Let me explain why; Our data is stored in tree data but reading I use flat data which is array version of tree data. You cannot traverse tree data. Only way is to read tree. Flat data stores nodes in top down order so its mixed with subs and main steps. So if you want to create main step, you need to know how many main steps already there and add plus one to that number you will get main step id. But for long time I couldnt fix it. It always shows begining main step number even if you add more main step it remains same. So I add modifications that when you click main button it refreshes finally. It did take time. I am serious. But as I mention previous logs, it is still refresh delayed but finally I found the reason why. It checks the counts then add steps. Weirdly, I did checking after the adding new node, It always checks counts then add steps. But I believe I can fix it tomorrow.
+Also I add a lots of comment to help my friends to understand code. Also, you can check it, so you will see it is not all template or just copy and pasted code. I know every parts of it because I spend lots of time on it although you sir say it seems too easy to implement. Sometimes I didnt add anything the code doesnt mean I didnt do anything. Most of times I have speand time on searching and trying to understand the problem. 
