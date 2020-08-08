@@ -55,3 +55,9 @@ After the zoom meeting, I started to research about the controller part of the p
 12.00 - 17.30
 Process was a little bit slow for today. We all are trying to fixin some errors of our parts. If we can manage to correct them, I hope I can connect the UI and background of the project.
 I am still waiting for the completing the other parts of to project and learning about using functions clearly in order to make the code more clear and understandable.
+
+08.08.2020
+12.30 - 18.30 & 20.00 - 00.00
+I tried to fix the refreshing data bug all day. It takes too much time to detect to error. I couldn't solve it yet, however, I can take the correct outputs while adding and removing the main steps.
+I tried to solve the problem with props parameter, however, it does not work. I guess program refreshes one step after the dragging a node. I mean there is one step delay on the process. Hopefully, I will solve the problem.
+I am still working on it.
