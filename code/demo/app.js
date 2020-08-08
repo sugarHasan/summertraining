@@ -92,6 +92,8 @@ class App extends Component {
       lastMovePrevPath: null, //those are necessary for which node is moved from where to where
       lastMoveNextPath: null,
       lastMoveNode: null,
+      traceFocusIndex: 0, //step tracing
+      traceFoundCount: null,
 
       //treedata where all nodes information are stored. It is not global data so be careful
       treeData: getTreeFromFlatData({
@@ -146,7 +148,12 @@ class App extends Component {
       lastMoveNextPath,
       lastMoveNode,
       mainsearchString,
+      traceFocusIndex,
+      traceFoundCount,
     } = this.state;
+
+    //colors
+    const colors = ["Red", "Black", "Green", "Blue"];
 
     //for testing in console
     const recordCall = (name, args) => {
@@ -175,7 +182,7 @@ class App extends Component {
       searchQuery &&
       node.name.toLowerCase().indexOf(searchQuery.toLowerCase()) > -1;
 
-    //finding how main steps
+    //finding how many main steps
     const findMain = (treeDataInput) => {
       var temp2 = 0;
       for (var i = 0; i < flatData.length; i++) {
@@ -189,11 +196,21 @@ class App extends Component {
 
     //refresh main steps ids and calls recursive function to refresh childs of those main steps and visits all nodes in flatdata
     function refreshMainSteps() {
-      var temp = 0;
+      var temp = -1;
+      for (var i = 0; i < flatData.length; i++) {
+        if (flatData[i].isMain) {
+          flatData[i].id = temp;
+          temp--;
+        }
+      }
+
+      temp = 0;
+
       for (var i = 0; i < flatData.length; i++) {
         if (flatData[i].isMain) {
           flatData[i].id = temp;
           temp++;
+          console.log(flatData[i]);
           refreshIndexes(flatData[i], -1, 0, -1);
         }
       }
@@ -222,6 +239,9 @@ class App extends Component {
     //custom search method for main steps count
     const countMainMethod = ({ node, searchQuery }) => node.isMain == true;
 
+    //custom search method for tracing
+    const tracing = ({ node, searchQuery }) => node != null;
+
     //search found index go prev
     const selectPrevMatch = () =>
       this.setState({
@@ -240,23 +260,28 @@ class App extends Component {
             : 0,
       });
 
+    //trace prev step
+    const selectPrevStep = () =>
+      this.setState({
+        traceFocusIndex:
+          traceFocusIndex !== null
+            ? (traceFoundCount + traceFocusIndex - 1) % traceFoundCount
+            : traceFoundCount - 1,
+      });
+
+    //trace next step
+    const selectNextStep = () =>
+      this.setState({
+        traceFocusIndex:
+          traceFocusIndex !== null
+            ? (traceFocusIndex + 1) % traceFoundCount
+            : 0,
+      });
+
     return (
       //html part. nothing is important here
-      <div
-        style={{ display: "flex", flexDirection: "column", height: "100vh" }}
-      >
-        <div style={{ flex: "0 0 auto", padding: "0 15px" }}>
-          <h3>Pseudocode Designer</h3>
-          <button onClick={this.expandAll}>Expand All</button>
-          <button onClick={this.collapseAll}>Collapse All</button>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <form
-            style={{ display: "inline-block" }}
-            onSubmit={(event) => {
-              event.preventDefault();
-            }}
-          >
-            <label htmlFor="find-box">
+      /*
+      <label htmlFor="find-box">
               <TextareaAutosize
                 id="find-box"
                 type="text"
@@ -283,14 +308,48 @@ class App extends Component {
             >
               &gt;
             </button>
-
-            <span>
-              &nbsp;Index:&nbsp;
+             &nbsp;Index:&nbsp;
               {searchFoundCount > 0 ? searchFocusIndex + 1 : 0}
               &nbsp;Total Found:&nbsp;
               {searchFoundCount || 0}
+      */
+      <div
+        style={{ display: "flex", flexDirection: "column", height: "100vh" }}
+      >
+        <div style={{ flex: "0 0 auto", padding: "0 15px" }}>
+          <h3>Pseudocode Designer</h3>
+          <button onClick={this.expandAll}>Expand All</button>
+          <button onClick={this.collapseAll}>Collapse All</button>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <form
+            style={{ display: "inline-block" }}
+            onSubmit={(event) => {
+              event.preventDefault();
+            }}
+          >
+            <button
+              type="button"
+              disabled={!traceFoundCount}
+              onClick={selectPrevStep}
+            >
+              Prev Step
+            </button>
+
+            <button
+              type="submit"
+              disabled={!traceFoundCount}
+              onClick={selectNextStep}
+            >
+              Next Step
+            </button>
+
+            <span>
               &nbsp;/ Main Step Number: &nbsp;
               {mainStepsearchFoundCount || 0}
+              &nbsp;/ Tracing Index: &nbsp;
+              {traceFoundCount > 0 ? traceFocusIndex + 1 : 0}
+              &nbsp;/ Total Step Number:&nbsp;
+              {traceFoundCount || 0}
             </span>
           </form>
         </div>
@@ -299,9 +358,9 @@ class App extends Component {
             theme={CustomTheme} //theme of nodes
             treeData={this.state.treeData}
             onChange={(treeData) => this.setState({ treeData })} //update onchange
-            searchMethod={customSearchMethod} //searchmethod
+            searchMethod={tracing} //searchmethod
             searchQuery={searchString} //search string
-            searchFocusOffset={searchFocusIndex} //search index
+            searchFocusOffset={traceFocusIndex} //search index
             style={{ width: "600px" }}
             rowHeight={45} // row height of nodes
             //dndType={externalNodeType} // for external node part which is not working correctly right now
@@ -356,8 +415,8 @@ class App extends Component {
               ) {
                 node.id = node.id.substring(0, node.id.length - 1) + 1;
               }
-              refreshMainSteps();
               findMain(treeData);
+              refreshMainSteps();
             }}
             //console log testing when node is being hold
             onDragStateChanged={(args) =>
@@ -366,9 +425,9 @@ class App extends Component {
             //search results
             searchFinishCallback={(matches) =>
               this.setState({
-                searchFoundCount: matches.length,
-                searchFocusIndex:
-                  matches.length > 0 ? searchFocusIndex % matches.length : 0,
+                traceFoundCount: matches.length,
+                traceFocusIndex:
+                  matches.length > 0 ? traceFocusIndex % matches.length : 0,
               })
             }
             //generated nodes at the beginning. Dont confuse with add main or add sub step button created steps. Those are in below.
@@ -436,6 +495,9 @@ class App extends Component {
                         addAsFirstChild: state.addAsFirstChild,
                       }).treeData,
                     }));
+                    //I tried to call function by 1 second delay but didnt help to solve problem
+                    //setTimeout(refreshMainSteps, 1000);
+                    //setTimeout(findMain, 1000)
                     refreshMainSteps();
                     findMain();
                   }}
@@ -484,6 +546,7 @@ class App extends Component {
             }
           />
         </div>
+
         <button
           //add main step button
           onClick={() => {
