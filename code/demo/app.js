@@ -10,17 +10,17 @@ import SortableTree, {
   SortableTreeWithoutDndContext,
 } from "react-sortable-tree";
 import CustomTheme from "../index";
+import "react-sortable-tree/style.css";
 import "./app.css";
 import ReactDOM from "react-dom";
 import TextareaAutosize from "react-autosize-textarea";
 import { node } from "prop-types";
 import PropTypes from "prop-types";
 import { DndProvider, DragSource } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import HTML5Backend from "react-dnd-html5-backend";
 
 //this part is for drag and drop external steps like for loop, while loop, if vs. But not working correctly
 
-/*
 // -------------------------
 // Create an drag source component that can be dragged into the tree
 // https://react-dnd.github.io/react-dnd/docs-drag-source.html
@@ -33,7 +33,7 @@ const externalNodeSpec = {
   // referencing the same object in different trees.
   beginDrag: (componentProps) => ({ node: { ...componentProps.node } }),
 };
-const externalNodeCollect = (connect /* , monitor ) => ({
+const externalNodeCollect = (connect /* , monitor */) => ({
   connectDragSource: connect.dragSource(),
   // Add props via react-dnd APIs to enable more visual
   // customization of your component
@@ -68,8 +68,6 @@ const YourExternalNodeComponent = DragSource(
   externalNodeSpec,
   externalNodeCollect
 )(externalNodeBaseComponent);
-
-*/
 
 //initial notes that are displayed in the beginning
 
@@ -186,7 +184,14 @@ class App extends Component {
     const findMain = (treeDataInput) => {
       var temp2 = 0;
       for (var i = 0; i < flatData.length; i++) {
-        if (flatData[i].isMain) temp2++;
+        if (flatData[i].isMain) {
+          if (flatData[i].parent == null) {
+            node.isMain = true;
+            temp2++;
+          } else {
+            node.isMain = false;
+          }
+        }
       }
       this.setState({
         mainStepsearchFoundCount: temp2,
@@ -313,253 +318,139 @@ class App extends Component {
               &nbsp;Total Found:&nbsp;
               {searchFoundCount || 0}
       */
-      <div
-        style={{ display: "flex", flexDirection: "column", height: "100vh" }}
-      >
-        <div style={{ flex: "0 0 auto", padding: "0 15px" }}>
-          <h3>Pseudocode Designer</h3>
-          <button onClick={this.expandAll}>Expand All</button>
-          <button onClick={this.collapseAll}>Collapse All</button>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <form
-            style={{ display: "inline-block" }}
-            onSubmit={(event) => {
-              event.preventDefault();
-            }}
-          >
-            <button
-              type="button"
-              disabled={!traceFoundCount}
-              onClick={selectPrevStep}
+
+      <div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100vh",
+          }}
+        >
+          <div style={{ flex: "0 0 auto", padding: "0 15px" }}>
+            <h3>Pseudocode Designer</h3>
+            <button onClick={this.expandAll}>Expand All</button>
+            <button onClick={this.collapseAll}>Collapse All</button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <form
+              style={{ display: "inline-block" }}
+              onSubmit={(event) => {
+                event.preventDefault();
+              }}
             >
-              Prev Step
-            </button>
+              <button
+                type="button"
+                disabled={!traceFoundCount}
+                onClick={selectPrevStep}
+              >
+                Prev Step
+              </button>
 
-            <button
-              type="submit"
-              disabled={!traceFoundCount}
-              onClick={selectNextStep}
-            >
-              Next Step
-            </button>
+              <button
+                type="submit"
+                disabled={!traceFoundCount}
+                onClick={selectNextStep}
+              >
+                Next Step
+              </button>
 
-            <span>
-              &nbsp;/ Main Step Number: &nbsp;
-              {mainStepsearchFoundCount || 0}
-              &nbsp;/ Tracing Index: &nbsp;
-              {traceFoundCount > 0 ? traceFocusIndex + 1 : 0}
-              &nbsp;/ Total Step Number:&nbsp;
-              {traceFoundCount || 0}
-            </span>
-          </form>
-        </div>
-        <div style={{ flex: "1 0 50%", padding: "0 0 0 15px" }}>
-          <SortableTree
-            theme={CustomTheme} //theme of nodes
-            treeData={this.state.treeData}
-            onChange={(treeData) => this.setState({ treeData })} //update onchange
-            searchMethod={tracing} //searchmethod
-            searchQuery={searchString} //search string
-            searchFocusOffset={traceFocusIndex} //search index
-            style={{ width: "600px" }}
-            rowHeight={45} // row height of nodes
-            //dndType={externalNodeType} // for external node part which is not working correctly right now
-            onMoveNode={(args) => {
-              recordCall("onMoveNode", args); //log in console when nodes are moved one place to another
-              const {
-                treeData,
-                prevPath,
-                nextPath,
-                node,
-                nextParentNode,
-              } = args;
-              this.setState({
-                lastMovePrevPath: prevPath,
-                lastMoveNextPath: nextPath,
-                lastMoveNode: node,
-                mainsearchString: "",
-              });
-
-              //** */
-              //updating ids when nodes are moved one place to another. It works only some cases so test it, find not working cases and fix it please guys
-              //** */
-
-              node.id = nextPath.join(".");
-              node.parent = nextParentNode;
-              if (nextParentNode == null) {
-                node.isMain = true;
-              } else {
-                node.isMain = false;
-              }
-
-              if (
-                nextParentNode != null &&
-                nextParentNode.children != null &&
-                nextParentNode.children.length > 1 &&
-                nextParentNode.children != undefined
-              ) {
-                var temp = parseInt(node.id.slice(-1));
-                for (var i = temp; i < nextParentNode.children.length; i++) {
-                  var temp2 =
-                    parseInt(nextParentNode.children[i].id.slice(-1)) + 1;
-                  nextParentNode.children[i].id =
-                    nextParentNode.children[i].id.substring(
-                      0,
-                      nextParentNode.children[i].id.length - 1
-                    ) + temp2;
-                }
-              } else if (
-                nextParentNode != null &&
-                nextParentNode.children.length <= 1 &&
-                nextParentNode.children != undefined
-              ) {
-                node.id = node.id.substring(0, node.id.length - 1) + 1;
-              }
-              findMain(treeData);
-              refreshMainSteps();
-            }}
-            //console log testing when node is being hold
-            onDragStateChanged={(args) =>
-              recordCall("onDragStateChanged", args)
-            }
-            //search results
-            searchFinishCallback={(matches) =>
-              this.setState({
-                traceFoundCount: matches.length,
-                traceFocusIndex:
-                  matches.length > 0 ? traceFocusIndex % matches.length : 0,
-              })
-            }
-            //generated nodes at the beginning. Dont confuse with add main or add sub step button created steps. Those are in below.
-            generateNodeProps={({ node, path }) => ({
-              title: (
-                <TextareaAutosize
-                  style={{ fontSize: "1.1rem" }}
-                  value={node.name}
-                  placeholder="Enter Code Here..."
-                  onChange={(event) => {
-                    const name = event.target.value;
-                    this.setState((state) => ({
-                      treeData: changeNodeAtPath({
-                        treeData: state.treeData,
-                        path,
-                        getNodeKey,
-                        newNode: { ...node, name },
-                      }),
-                    }));
-                  }}
-                />
-              ),
-              buttons: [
-                <button
-                  //add sub step button
-                  onClick={() => {
-                    this.setState((state) => ({
-                      treeData: addNodeUnderParent({
-                        treeData: state.treeData,
-                        parentKey: path[path.length - 1],
-                        expandParent: true,
-                        getNodeKey,
-                        //it creates new nodes here
-                        newNode: {
-                          //setting new nodes title which is empty space
-                          title: (
-                            <TextareaAutosize
-                              style={{ fontSize: "1.1rem" }}
-                              value={""}
-                              placeholder="Enter Code Here..."
-                              onChange={(event) => {
-                                const name = event.target.value;
-                                this.setState((state) => ({
-                                  mainsearchString: event.target.value,
-                                  treeData: changeNodeAtPath({
-                                    treeData: state.treeData,
-                                    path,
-                                    getNodeKey,
-                                    newNode: { ...node, name },
-                                  }),
-                                }));
-                              }}
-                            />
-                          ),
-                          //setting new nodes id
-                          id:
-                            node.id +
-                            "." +
-                            (node.children == undefined
-                              ? 1
-                              : node.children.length + 1),
-                          //setting new nodes parent
-                          parent: node,
-                        },
-                        addAsFirstChild: state.addAsFirstChild,
-                      }).treeData,
-                    }));
-                    //I tried to call function by 1 second delay but didnt help to solve problem
-                    //setTimeout(refreshMainSteps, 1000);
-                    //setTimeout(findMain, 1000)
-                    refreshMainSteps();
-                    findMain();
-                  }}
-                >
-                  Add Sup Step
-                </button>,
-                <button
-                  // remove step button
-                  onClick={() => {
-                    this.setState((state) => ({
-                      treeData: removeNodeAtPath({
-                        treeData: state.treeData,
-                        path,
-                        getNodeKey,
-                      }),
-                    }));
-                    refreshMainSteps();
-                    findMain(this.treeData);
-                  }}
-                >
-                  Remove
-                </button>,
-              ],
-            })}
-          />
-        </div>
-        {// to show nodes are moved where to where. IT IS VERY IMPORTANT AND HELPFULL FOR DEBUGGING AND TESTING SO PLEASE USE IT.
-        lastMoveNode && (
-          <div>
-            Node &quot;{lastMoveNode.title}&quot; moved from path [
-            {lastMovePrevPath.join(",")}] to path [{lastMoveNextPath.join(",")}
-            ].
+              <span>
+                &nbsp;/ Main Step Number: &nbsp;
+                {mainStepsearchFoundCount || 0}
+                &nbsp;/ Tracing Index: &nbsp;
+                {traceFoundCount > 0 ? traceFocusIndex + 1 : 0}
+                &nbsp;/ Total Step Number:&nbsp;
+                {traceFoundCount || 0}
+              </span>
+            </form>
           </div>
-        )}
-        <div style={{ flex: "0 0 0%", padding: "0 0 0 0px" }}>
-          <SortableTree
-            // this sortable tree is exact same proporties with main sortable tree but it is only for count main steps. I create this because you cannot create two search in one sortable tree.
-            treeData={this.state.treeData}
-            onChange={(treeData) => this.setState({ treeData })}
-            searchMethod={countMainMethod}
-            searchQuery={mainsearchString}
-            searchFinishCallback={(matches) =>
-              this.setState({
-                mainStepsearchFoundCount: matches.length,
-              })
-            }
-          />
-        </div>
+          <div style={{ flex: "1 0 50%", padding: "0 0 0 15px" }}>
+            <SortableTree
+              theme={CustomTheme} //theme of nodes
+              treeData={this.state.treeData}
+              onChange={(treeData) => this.setState({ treeData })} //update onchange
+              searchMethod={tracing} //searchmethod
+              searchQuery={searchString} //search string
+              searchFocusOffset={traceFocusIndex} //search index
+              style={{ width: "600px" }}
+              rowHeight={60} // row height of nodes
+              //dndType={externalNodeType} // for external node part which is not working correctly right now
+              onMoveNode={(args) => {
+                recordCall("onMoveNode", args); //log in console when nodes are moved one place to another
+                const {
+                  treeData,
+                  prevPath,
+                  nextPath,
+                  node,
+                  nextParentNode,
+                } = args;
+                this.setState({
+                  lastMovePrevPath: prevPath,
+                  lastMoveNextPath: nextPath,
+                  lastMoveNode: node,
+                  mainsearchString: "",
+                });
 
-        <button
-          //add main step button
-          onClick={() => {
-            this.setState((state) => ({
-              treeData: state.treeData.concat({
+                //** */
+                //updating ids when nodes are moved one place to another. It works only some cases so test it, find not working cases and fix it please guys
+                //** */
+
+                node.id = nextPath.join(".");
+                node.parent = nextParentNode;
+
+                if (nextParentNode == null) {
+                  node.isMain = true;
+                } else {
+                  node.isMain = false;
+                }
+
+                if (
+                  nextParentNode != null &&
+                  nextParentNode.children != null &&
+                  nextParentNode.children.length > 1 &&
+                  nextParentNode.children != undefined
+                ) {
+                  var temp = parseInt(node.id.slice(-1));
+                  for (var i = temp; i < nextParentNode.children.length; i++) {
+                    var temp2 =
+                      parseInt(nextParentNode.children[i].id.slice(-1)) + 1;
+                    nextParentNode.children[i].id =
+                      nextParentNode.children[i].id.substring(
+                        0,
+                        nextParentNode.children[i].id.length - 1
+                      ) + temp2;
+                  }
+                } else if (
+                  nextParentNode != null &&
+                  nextParentNode.children.length <= 1 &&
+                  nextParentNode.children != undefined
+                ) {
+                  node.id = node.id.substring(0, node.id.length - 1) + 1;
+                }
+                findMain(treeData);
+                refreshMainSteps();
+              }}
+              //console log testing when node is being hold
+              onDragStateChanged={(args) =>
+                recordCall("onDragStateChanged", args)
+              }
+              //search results
+              searchFinishCallback={(matches) =>
+                this.setState({
+                  traceFoundCount: matches.length,
+                  traceFocusIndex:
+                    matches.length > 0 ? traceFocusIndex % matches.length : 0,
+                })
+              }
+              //generated nodes at the beginning. Dont confuse with add main or add sub step button created steps. Those are in below.
+              generateNodeProps={({ node, path }) => ({
                 title: (
                   <TextareaAutosize
                     style={{ fontSize: "1.1rem" }}
+                    value={node.name}
                     placeholder="Enter Code Here..."
-                    value={""}
                     onChange={(event) => {
                       const name = event.target.value;
-
                       this.setState((state) => ({
                         treeData: changeNodeAtPath({
                           treeData: state.treeData,
@@ -571,40 +462,163 @@ class App extends Component {
                     }}
                   />
                 ),
-                id: mainStepsearchFoundCount,
-                parent: null,
-                isMain: true,
-              }),
-            }));
-            refreshMainSteps();
-            findMain();
-          }}
-        >
-          Add Main Step
-        </button>
-        <br />
-        <label htmlFor="addAsFirstChild">
-          Add new nodes at start
-          <input
-            name="addAsFirstChild"
-            type="checkbox"
-            checked={this.state.addAsFirstChild}
-            onChange={() =>
+                buttons: [
+                  <button
+                    //add sub step button
+                    onClick={() => {
+                      this.setState((state) => ({
+                        treeData: addNodeUnderParent({
+                          treeData: state.treeData,
+                          parentKey: path[path.length - 1],
+                          expandParent: true,
+                          getNodeKey,
+                          //it creates new nodes here
+                          newNode: {
+                            //setting new nodes title which is empty space
+                            title: (
+                              <TextareaAutosize
+                                style={{ fontSize: "1.1rem" }}
+                                value={""}
+                                placeholder="Enter Code Here..."
+                                onChange={(event) => {
+                                  const name = event.target.value;
+                                  this.setState((state) => ({
+                                    mainsearchString: event.target.value,
+                                    treeData: changeNodeAtPath({
+                                      treeData: state.treeData,
+                                      path,
+                                      getNodeKey,
+                                      newNode: { ...node, name },
+                                    }),
+                                  }));
+                                }}
+                              />
+                            ),
+                            //setting new nodes id
+                            id:
+                              node.id +
+                              "." +
+                              (node.children == undefined
+                                ? 1
+                                : node.children.length + 1),
+                            //setting new nodes parent
+                            parent: node,
+                          },
+                          addAsFirstChild: state.addAsFirstChild,
+                        }).treeData,
+                      }));
+                      //I tried to call function by 1 second delay but didnt help to solve problem
+                      //setTimeout(refreshMainSteps, 1000);
+                      //setTimeout(findMain, 1000)
+                      refreshMainSteps();
+                      findMain();
+                    }}
+                  >
+                    Add Sup Step
+                  </button>,
+                  <button
+                    // remove step button
+                    onClick={() => {
+                      this.setState((state) => ({
+                        treeData: removeNodeAtPath({
+                          treeData: state.treeData,
+                          path,
+                          getNodeKey,
+                        }),
+                      }));
+                      refreshMainSteps();
+                      findMain(this.treeData);
+                    }}
+                  >
+                    Remove
+                  </button>,
+                ],
+              })}
+            />
+          </div>
+          {// to show nodes are moved where to where. IT IS VERY IMPORTANT AND HELPFULL FOR DEBUGGING AND TESTING SO PLEASE USE IT.
+          lastMoveNode && (
+            <div>
+              Node &quot;{lastMoveNode.title}&quot; moved from path [
+              {lastMovePrevPath.join(",")}] to path [
+              {lastMoveNextPath.join(",")}
+              ].
+            </div>
+          )}
+          <div style={{ flex: "0 0 0%", padding: "0 0 0 0px" }}>
+            <SortableTree
+              // this sortable tree is exact same proporties with main sortable tree but it is only for count main steps. I create this because you cannot create two search in one sortable tree.
+              treeData={this.state.treeData}
+              onChange={(treeData) => this.setState({ treeData })}
+              searchMethod={countMainMethod}
+              searchQuery={mainsearchString}
+              searchFinishCallback={(matches) =>
+                this.setState({
+                  mainStepsearchFoundCount: matches.length,
+                })
+              }
+            />
+          </div>
+
+          <button
+            //add main step button
+            onClick={() => {
               this.setState((state) => ({
-                addAsFirstChild: !state.addAsFirstChild,
-              }))
-            }
-          />
-        </label>
-        <div>
-          ↓PseudoCode↓
-          <ul>
-            {flatData.map(({ id, name, parent }) => (
-              <li key={id}>
-                //{id}, code: {name}, parent: {parent || "null"}
-              </li>
-            ))}
-          </ul>
+                treeData: state.treeData.concat({
+                  title: (
+                    <TextareaAutosize
+                      style={{ fontSize: "1.1rem" }}
+                      placeholder="Enter Code Here..."
+                      value={""}
+                      onChange={(event) => {
+                        const name = event.target.value;
+
+                        this.setState((state) => ({
+                          treeData: changeNodeAtPath({
+                            treeData: state.treeData,
+                            path,
+                            getNodeKey,
+                            newNode: { ...node, name },
+                          }),
+                        }));
+                      }}
+                    />
+                  ),
+                  id: mainStepsearchFoundCount,
+                  parent: null,
+                  isMain: true,
+                }),
+              }));
+              refreshMainSteps();
+              findMain();
+            }}
+          >
+            Add Main Step
+          </button>
+          <br />
+          <label htmlFor="addAsFirstChild">
+            Add new nodes at start
+            <input
+              name="addAsFirstChild"
+              type="checkbox"
+              checked={this.state.addAsFirstChild}
+              onChange={() =>
+                this.setState((state) => ({
+                  addAsFirstChild: !state.addAsFirstChild,
+                }))
+              }
+            />
+          </label>
+          <div>
+            ↓PseudoCode↓
+            <ul>
+              {flatData.map(({ id, name, parent }) => (
+                <li key={id}>
+                  //{id}, code: {name}, parent: {parent || "null"}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     );
