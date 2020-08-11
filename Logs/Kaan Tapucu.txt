@@ -59,4 +59,9 @@ Also I add a lots of comment to help my friends to understand code. Also, you ca
 
 08.08.2020
 12:00 - 15:00
-I added tracing so you. You can go next or prev steps and current step is highlighted as red.
+I added tracing. You can go next or prev steps and current step is highlighted as red.
+
+10.08.2020
+7:00 - 4:20
+Watch a lot of tutorial about drag and drop. In order to implement Drag and Drop, all libraries should be up to date. However, mines are very old like 3 years old updates. So, I updated all libraries, added srs file that stores necessary files. Package are updated. Only this takes so much time. As a result of updates, error messages is decreased and understandable error messages appeared. I hope that will help my team members to implement drag and drop but probably I will do the implementation, again.
+Also, fix id problem there is no problem left when you do add and remove steps. I tried to fix when id updated when steps are moved somewhere to another. I was trying to that by recursion by I found out that recursion is not passing steps in each recursive step. So, I will approach this problem by doing loop instead of recursion.
