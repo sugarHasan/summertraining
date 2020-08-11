@@ -76,7 +76,6 @@ const initialData = [
   { id: "1", name: "", parent: null, isMain: true },
   { id: "2", name: "", parent: null, isMain: true },
 ];
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -137,7 +136,7 @@ class App extends Component {
   }
 
   render() {
-    const {
+    var {
       searchString,
       searchFocusIndex,
       searchFoundCount,
@@ -162,7 +161,7 @@ class App extends Component {
     const getNodeKey = ({ treeIndex }) => treeIndex;
 
     //flatdata is array version of treedata so you can access all nodes like flatdata[i]
-    const flatData = getFlatDataFromTree({
+    var flatData = getFlatDataFromTree({
       treeData: this.state.treeData,
       getNodeKey: ({ node }) => node.id, // This ensures your "id" properties are exported in the path
       ignoreCollapsed: false, // Makes sure you traverse every node in the tree, not just the visible ones
@@ -181,63 +180,61 @@ class App extends Component {
       node.name.toLowerCase().indexOf(searchQuery.toLowerCase()) > -1;
 
     //finding how many main steps
-    const findMain = (treeDataInput) => {
+    const findMain = (num) => {
       var temp2 = 0;
       for (var i = 0; i < flatData.length; i++) {
-        if (flatData[i].isMain) {
-          if (flatData[i].parent == null) {
-            node.isMain = true;
-            temp2++;
-          } else {
-            node.isMain = false;
-          }
+        if (flatData[i].parent == null) {
+          //console.log(flatData[i]);
+          node.isMain = true;
+          temp2++;
+        } else {
+          node.isMain = false;
         }
       }
       this.setState({
-        mainStepsearchFoundCount: temp2,
+        flatData: flatData,
+        mainStepsearchFoundCount:
+          num == null ? temp2 : mainStepsearchFoundCount,
       });
-      this.setState({ treeDataInput });
+
+      //console.log(temp2);
+      //console.log(mainStepsearchFoundCount);
     };
 
     //refresh main steps ids and calls recursive function to refresh childs of those main steps and visits all nodes in flatdata
     function refreshMainSteps() {
-      var temp = -1;
-      for (var i = 0; i < flatData.length; i++) {
-        if (flatData[i].isMain) {
-          flatData[i].id = temp;
-          temp--;
-        }
-      }
-
-      temp = 0;
+      var temp = 0;
 
       for (var i = 0; i < flatData.length; i++) {
-        if (flatData[i].isMain) {
+        if (flatData[i].parent == null) {
           flatData[i].id = temp;
           temp++;
-          console.log(flatData[i]);
           refreshIndexes(flatData[i], -1, 0, -1);
         }
       }
-      console.log(temp);
+      //console.log(temp);
     }
     //recussion function that do recursive thought the all nodes in flat data and fix their ids. It should work if I am correct but I couldnt test it because main and sub step ids are not refreshing on time
     function refreshIndexes(n, parentIndex, depth, childNum) {
+      if (n == null || n == undefined) return;
+
       if (
-        n != null &&
         n.children != null &&
         n.children.length > 1 &&
         n.children != undefined
       ) {
-        for (var i = 0; i < n.length; i++) {
-          refreshIndexes(n[i], n.id, depth + 1, i);
+        for (var i = 0; i < n.children.length; i++) {
+          if (n.parent != null) n.id = parentIndex + "." + i;
+          console.log(n);
+          refreshIndexes(n.children[i], n.id, depth + 1, i);
         }
       } else {
-        if (!n.isMain) {
-          n.id = n.id + "." + parentIndex + ".";
-          for (var i = 0; i <= depth; i++) {
-            n.id = n.id + childNum;
-          }
+        if (n.parent != null) {
+          n.id = parentIndex + "." + childNum;
+          //for (var i = 0; i <= depth; i++) {
+          //n.id = n.id + childNum;
+          //}
+          return;
         }
       }
     }
@@ -404,6 +401,7 @@ class App extends Component {
                   node.isMain = false;
                 }
 
+                /*
                 if (
                   nextParentNode != null &&
                   nextParentNode.children != null &&
@@ -422,12 +420,24 @@ class App extends Component {
                   }
                 } else if (
                   nextParentNode != null &&
-                  nextParentNode.children.length <= 1 &&
-                  nextParentNode.children != undefined
+                  nextParentNode.children.length <= 1
                 ) {
                   node.id = node.id.substring(0, node.id.length - 1) + 1;
+                } else {
+                  var temp = 0;
+
+                  for (var i = 0; i < flatData.length; i++) {
+                    if (flatData[i].isMain) {
+                      flatData[i].id = temp;
+                      temp++;
+                      //console.log(i);
+                      refreshIndexes(flatData[i], -1, 0, -1);
+                    }
+                  }
                 }
-                findMain(treeData);
+                */
+
+                findMain();
                 refreshMainSteps();
               }}
               //console log testing when node is being hold
@@ -466,52 +476,56 @@ class App extends Component {
                   <button
                     //add sub step button
                     onClick={() => {
-                      this.setState((state) => ({
-                        treeData: addNodeUnderParent({
-                          treeData: state.treeData,
-                          parentKey: path[path.length - 1],
-                          expandParent: true,
-                          getNodeKey,
-                          //it creates new nodes here
-                          newNode: {
-                            //setting new nodes title which is empty space
-                            title: (
-                              <TextareaAutosize
-                                style={{ fontSize: "1.1rem" }}
-                                value={""}
-                                placeholder="Enter Code Here..."
-                                onChange={(event) => {
-                                  const name = event.target.value;
-                                  this.setState((state) => ({
-                                    mainsearchString: event.target.value,
-                                    treeData: changeNodeAtPath({
-                                      treeData: state.treeData,
-                                      path,
-                                      getNodeKey,
-                                      newNode: { ...node, name },
-                                    }),
-                                  }));
-                                }}
-                              />
-                            ),
-                            //setting new nodes id
-                            id:
-                              node.id +
-                              "." +
-                              (node.children == undefined
-                                ? 1
-                                : node.children.length + 1),
-                            //setting new nodes parent
-                            parent: node,
-                          },
-                          addAsFirstChild: state.addAsFirstChild,
-                        }).treeData,
-                      }));
+                      this.setState(
+                        (state) => ({
+                          treeData: addNodeUnderParent({
+                            treeData: state.treeData,
+                            parentKey: path[path.length - 1],
+                            expandParent: true,
+                            getNodeKey,
+                            //it creates new nodes here
+                            newNode: {
+                              //setting new nodes title which is empty space
+                              title: (
+                                <TextareaAutosize
+                                  style={{ fontSize: "1.1rem" }}
+                                  value={""}
+                                  placeholder="Enter Code Here..."
+                                  onChange={(event) => {
+                                    const name = event.target.value;
+                                    this.setState((state) => ({
+                                      mainsearchString: event.target.value,
+                                      treeData: changeNodeAtPath({
+                                        treeData: state.treeData,
+                                        path,
+                                        getNodeKey,
+                                        newNode: { ...node, name },
+                                      }),
+                                    }));
+                                  }}
+                                />
+                              ),
+                              //setting new nodes id
+                              id:
+                                node.id +
+                                "." +
+                                (node.children == undefined
+                                  ? 1
+                                  : node.children.length + 1),
+                              //setting new nodes parent
+                              parent: node,
+                            },
+                            addAsFirstChild: state.addAsFirstChild,
+                          }).treeData,
+                        }),
+                        () => {
+                          findMain();
+                          refreshMainSteps();
+                        }
+                      );
                       //I tried to call function by 1 second delay but didnt help to solve problem
                       //setTimeout(refreshMainSteps, 1000);
                       //setTimeout(findMain, 1000)
-                      refreshMainSteps();
-                      findMain();
                     }}
                   >
                     Add Sup Step
@@ -519,15 +533,24 @@ class App extends Component {
                   <button
                     // remove step button
                     onClick={() => {
-                      this.setState((state) => ({
-                        treeData: removeNodeAtPath({
-                          treeData: state.treeData,
-                          path,
-                          getNodeKey,
+                      this.setState(
+                        (state) => ({
+                          treeData: removeNodeAtPath({
+                            treeData: state.treeData,
+                            path,
+                            getNodeKey,
+                          }),
+
+                          mainStepsearchFoundCount:
+                            node.parent == null
+                              ? mainStepsearchFoundCount--
+                              : mainStepsearchFoundCount,
                         }),
-                      }));
-                      refreshMainSteps();
-                      findMain(this.treeData);
+                        () => {
+                          findMain(mainStepsearchFoundCount);
+                          refreshMainSteps();
+                        }
+                      );
                     }}
                   >
                     Remove
@@ -563,34 +586,39 @@ class App extends Component {
           <button
             //add main step button
             onClick={() => {
-              this.setState((state) => ({
-                treeData: state.treeData.concat({
-                  title: (
-                    <TextareaAutosize
-                      style={{ fontSize: "1.1rem" }}
-                      placeholder="Enter Code Here..."
-                      value={""}
-                      onChange={(event) => {
-                        const name = event.target.value;
+              this.setState(
+                (state) => ({
+                  treeData: state.treeData.concat({
+                    title: (
+                      <TextareaAutosize
+                        style={{ fontSize: "1.1rem" }}
+                        placeholder="Enter Code Here..."
+                        value={""}
+                        onChange={(event) => {
+                          const name = event.target.value;
 
-                        this.setState((state) => ({
-                          treeData: changeNodeAtPath({
-                            treeData: state.treeData,
-                            path,
-                            getNodeKey,
-                            newNode: { ...node, name },
-                          }),
-                        }));
-                      }}
-                    />
-                  ),
-                  id: mainStepsearchFoundCount,
-                  parent: null,
-                  isMain: true,
+                          this.setState((state) => ({
+                            treeData: changeNodeAtPath({
+                              treeData: state.treeData,
+                              path,
+                              getNodeKey,
+                              newNode: { ...node, name },
+                            }),
+                          }));
+                        }}
+                      />
+                    ),
+                    id: mainStepsearchFoundCount,
+                    parent: null,
+                    isMain: true,
+                  }),
+                  mainStepsearchFoundCount: mainStepsearchFoundCount++,
                 }),
-              }));
-              refreshMainSteps();
-              findMain();
+                () => {
+                  findMain(mainStepsearchFoundCount);
+                  refreshMainSteps();
+                }
+              );
             }}
           >
             Add Main Step
