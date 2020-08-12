@@ -73,3 +73,6 @@ And finally I able to solve id problem completely. I found out that recursive is
 12.08.2020
 14:00 - 20:00
 Due to the fact that I added libraries, my team members couldnt start github code. So fix it. Berke implement drag and drop nodes into the project and I fix it and successfully worked. Also I create while and if nodes. In addition, I added nodes ids in the beginning of the nodes.
+
+20:20 - 21:20
+Selecting and retriving highlighted text feature is added. It will be used for variable decleration from text area.
