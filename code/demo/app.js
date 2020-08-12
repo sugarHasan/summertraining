@@ -158,6 +158,14 @@ class App extends Component {
 
     const getNodeKey = ({ treeIndex }) => treeIndex;
 
+    var prevSelectedText;
+    var selectedText;
+    /*
+    document.onmouseup = () => {
+      console.log(window.getSelection().toString());
+    };
+    */
+
     //flatdata is array version of treedata so you can access all nodes like flatdata[i]
     var flatData = getFlatDataFromTree({
       treeData: this.state.treeData,
@@ -234,6 +242,30 @@ class App extends Component {
             : 0,
       });
 
+    document.onmouseup = () => {
+      if (
+        selectedText != null ||
+        selectedText != undefined ||
+        selectedText != ""
+      ) {
+        prevSelectedText = selectedText;
+        //console.log(prevSelectedText);
+      }
+
+      selectedText = window.getSelection().toString();
+      //console.log(selectedText);
+    };
+
+    const getSelectedText = () => {
+      //selectedText = window.getSelection().toString();
+      if (
+        selectedText != null ||
+        selectedText != undefined ||
+        selectedText != ""
+      )
+        console.log(prevSelectedText);
+    };
+
     return (
       //html part. nothing is important here
       <div>
@@ -269,6 +301,15 @@ class App extends Component {
               >
                 Next Step
               </button>
+
+              <button
+                type="submit"
+                //disabled={!traceFoundCount}
+                onClick={getSelectedText}
+              >
+                Select Text
+              </button>
+
               <span>
                 &nbsp;/ Main Step Number: &nbsp;
                 {mainStepsearchFoundCount || 0}
