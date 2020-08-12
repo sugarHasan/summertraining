@@ -69,3 +69,7 @@ Also, fix id problem there is no problem left when you do add and remove steps. 
 11.08.2020
 8:00 - 3:45
 And finally I able to solve id problem completely. I found out that recursive isnt the problem. Problem was I was trying to change flatdata which is used for just for printing and I just realise that. So, working the treedata instead of flatdata solve the problem. But still with treedata, there were tons of problems. Thats why it did take long time today. Also, we have tried to solve(mostly me) this id problem since at the beginning so it is kinda relief that I solved it. Good for me! Yeey!
+
+12.08.2020
+14:00 - 20:00
+Due to the fact that I added libraries, my team members couldnt start github code. So fix it. Berke implement drag and drop nodes into the project and I fix it and successfully worked. Also I create while and if nodes. In addition, I added nodes ids in the beginning of the nodes.
