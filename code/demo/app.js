@@ -72,9 +72,9 @@ const YourExternalNodeComponent = DragSource(
 //initial notes that are displayed in the beginning
 
 const initialData = [
-  { id: "0", name: "", parent: null, isMain: true },
-  { id: "1", name: "", parent: null, isMain: true },
-  { id: "2", name: "", parent: null, isMain: true },
+  { id: 0, name: "", parent: null },
+  { id: 1, name: "", parent: null },
+  { id: 2, name: "", parent: null },
 ];
 class App extends Component {
   constructor(props) {
@@ -97,7 +97,6 @@ class App extends Component {
         flatData: initialData.map((node) => ({
           ...node,
           title: node.name,
-          isMain: node.isMain,
         })),
         getKey: (node) => node.id, // resolve a node's key
         getParentKey: (node) => node.parent, // resolve a node's parent's key
@@ -149,9 +148,6 @@ class App extends Component {
       traceFoundCount,
     } = this.state;
 
-    //colors
-    const colors = ["Red", "Black", "Green", "Blue"];
-
     //for testing in console
     const recordCall = (name, args) => {
       // eslint-disable-next-line no-console
@@ -168,99 +164,55 @@ class App extends Component {
     }).map(({ node, path }) => ({
       id: node.id,
       name: node.name,
-      isMain: node.isMain,
       // The last entry in the path is this node's key
       // The second to last entry (accessed here) is the parent node's key
       parent: path.length > 1 ? path[path.length - 2] : null,
     }));
 
     // Case insensitive search of `node.name`
+    /*
     const customSearchMethod = ({ node, searchQuery }) =>
       searchQuery &&
       node.name.toLowerCase().indexOf(searchQuery.toLowerCase()) > -1;
+      */
 
     //finding how many main steps
     const findMain = (num) => {
       var temp2 = 0;
       for (var i = 0; i < flatData.length; i++) {
         if (flatData[i].parent == null) {
-          //console.log(flatData[i]);
-          node.isMain = true;
           temp2++;
-        } else {
-          node.isMain = false;
         }
       }
       this.setState({
-        flatData: flatData,
         mainStepsearchFoundCount:
           num == null ? temp2 : mainStepsearchFoundCount,
       });
-
-      //console.log(temp2);
-      //console.log(mainStepsearchFoundCount);
     };
 
-    //refresh main steps ids and calls recursive function to refresh childs of those main steps and visits all nodes in flatdata
-    function refreshMainSteps() {
-      var temp = 0;
-
-      for (var i = 0; i < flatData.length; i++) {
-        if (flatData[i].parent == null) {
-          flatData[i].id = temp;
-          temp++;
-          refreshIndexes(flatData[i], -1, 0, -1);
-        }
-      }
-      //console.log(temp);
-    }
     //recussion function that do recursive thought the all nodes in flat data and fix their ids. It should work if I am correct but I couldnt test it because main and sub step ids are not refreshing on time
-    function refreshIndexes(n, parentIndex, depth, childNum) {
+    const refreshIndexes = (n, parentId, depth, childNum) => {
       if (n == null || n == undefined) return;
+
+      //console.log(childNum);
+      if (n.parent != null) n.id = parentId + "." + childNum;
 
       if (
         n.children != null &&
-        n.children.length > 1 &&
+        n.children.length > 0 &&
         n.children != undefined
       ) {
         for (var i = 0; i < n.children.length; i++) {
-          if (n.parent != null) n.id = parentIndex + "." + i;
-          console.log(n);
-          refreshIndexes(n.children[i], n.id, depth + 1, i);
-        }
-      } else {
-        if (n.parent != null) {
-          n.id = parentIndex + "." + childNum;
-          //for (var i = 0; i <= depth; i++) {
-          //n.id = n.id + childNum;
-          //}
-          return;
+          //console.log(n.children[i]);
+          refreshIndexes(n.children[i], n.id, depth + 1, i + 1);
         }
       }
-    }
+    };
     //custom search method for main steps count
-    const countMainMethod = ({ node, searchQuery }) => node.isMain == true;
+    const countMainMethod = ({ node, searchQuery }) => node.parent == null;
 
     //custom search method for tracing
     const tracing = ({ node, searchQuery }) => node != null;
-
-    //search found index go prev
-    const selectPrevMatch = () =>
-      this.setState({
-        searchFocusIndex:
-          searchFocusIndex !== null
-            ? (searchFoundCount + searchFocusIndex - 1) % searchFoundCount
-            : searchFoundCount - 1,
-      });
-
-    //search found index go next
-    const selectNextMatch = () =>
-      this.setState({
-        searchFocusIndex:
-          searchFocusIndex !== null
-            ? (searchFocusIndex + 1) % searchFoundCount
-            : 0,
-      });
 
     //trace prev step
     const selectPrevStep = () =>
@@ -282,40 +234,6 @@ class App extends Component {
 
     return (
       //html part. nothing is important here
-      /*
-      <label htmlFor="find-box">
-              <TextareaAutosize
-                id="find-box"
-                type="text"
-                placeholder="Search..."
-                value={searchString}
-                onChange={(event) =>
-                  this.setState({ searchString: event.target.value })
-                }
-              />
-            </label>
-
-            <button
-              type="button"
-              disabled={!searchFoundCount}
-              onClick={selectPrevMatch}
-            >
-              &lt;
-            </button>
-
-            <button
-              type="submit"
-              disabled={!searchFoundCount}
-              onClick={selectNextMatch}
-            >
-              &gt;
-            </button>
-             &nbsp;Index:&nbsp;
-              {searchFoundCount > 0 ? searchFocusIndex + 1 : 0}
-              &nbsp;Total Found:&nbsp;
-              {searchFoundCount || 0}
-      */
-
       <div>
         <div
           style={{
@@ -388,19 +306,10 @@ class App extends Component {
                   mainsearchString: "",
                 });
 
-                //** */
-                //updating ids when nodes are moved one place to another. It works only some cases so test it, find not working cases and fix it please guys
-                //** */
-
                 node.id = nextPath.join(".");
                 node.parent = nextParentNode;
 
-                if (nextParentNode == null) {
-                  node.isMain = true;
-                } else {
-                  node.isMain = false;
-                }
-
+                //not necessay anymore but I spend too much time on it that I dont want to delete it.
                 /*
                 if (
                   nextParentNode != null &&
@@ -408,15 +317,15 @@ class App extends Component {
                   nextParentNode.children.length > 1 &&
                   nextParentNode.children != undefined
                 ) {
-                  var temp = parseInt(node.id.slice(-1));
-                  for (var i = temp; i < nextParentNode.children.length; i++) {
-                    var temp2 =
-                      parseInt(nextParentNode.children[i].id.slice(-1)) + 1;
+                  //var temp = parseInt(node.id.slice(-1));
+                  for (var i = 0; i < nextParentNode.children.length; i++) {
+                    //var temp2 = parseInt(nextParentNode.children[i].id.slice(-1));
                     nextParentNode.children[i].id =
                       nextParentNode.children[i].id.substring(
                         0,
                         nextParentNode.children[i].id.length - 1
-                      ) + temp2;
+                      ) +
+                      (i + 1);
                   }
                 } else if (
                   nextParentNode != null &&
@@ -424,21 +333,30 @@ class App extends Component {
                 ) {
                   node.id = node.id.substring(0, node.id.length - 1) + 1;
                 } else {
-                  var temp = 0;
-
-                  for (var i = 0; i < flatData.length; i++) {
-                    if (flatData[i].isMain) {
-                      flatData[i].id = temp;
-                      temp++;
-                      //console.log(i);
-                      refreshIndexes(flatData[i], -1, 0, -1);
+                  var temp = parseInt(node.id.slice(-1));
+                  var temp2 = 0;
+                  for (var i = 0; i < temp; i++) {
+                    if (flatData[i].parent == null) {
+                      //console.log(flatData[i]);
+                      temp2++;
+                    }
+                  }
+                  node.id = temp2;
+                  for (var i = temp + 1; i < treeData.length; i++) {
+                    if (treeData[i].parent == null) {
+                      //console.log(flatData[i]);
+                      treeData[i].id = treeData[i].id + 1;
                     }
                   }
                 }
                 */
-
+                for (var i = 0; i < treeData.length; i++) {
+                  if (treeData[i].parent == null) {
+                    treeData[i].id = i;
+                    refreshIndexes(treeData[i], -1, 0, -1);
+                  }
+                }
                 findMain();
-                refreshMainSteps();
               }}
               //console log testing when node is being hold
               onDragStateChanged={(args) =>
@@ -520,12 +438,8 @@ class App extends Component {
                         }),
                         () => {
                           findMain();
-                          refreshMainSteps();
                         }
                       );
-                      //I tried to call function by 1 second delay but didnt help to solve problem
-                      //setTimeout(refreshMainSteps, 1000);
-                      //setTimeout(findMain, 1000)
                     }}
                   >
                     Add Sup Step
@@ -540,7 +454,6 @@ class App extends Component {
                             path,
                             getNodeKey,
                           }),
-
                           mainStepsearchFoundCount:
                             node.parent == null
                               ? mainStepsearchFoundCount--
@@ -548,7 +461,13 @@ class App extends Component {
                         }),
                         () => {
                           findMain(mainStepsearchFoundCount);
-                          refreshMainSteps();
+                          for (var i = 0; i < this.state.treeData.length; i++) {
+                            if (this.state.treeData[i].parent == null) {
+                              //console.log(flatData[i]);
+                              this.state.treeData[i].id = i;
+                              refreshIndexes(this.state.treeData[i], -1, 0, -1);
+                            }
+                          }
                         }
                       );
                     }}
@@ -610,13 +529,11 @@ class App extends Component {
                     ),
                     id: mainStepsearchFoundCount,
                     parent: null,
-                    isMain: true,
                   }),
                   mainStepsearchFoundCount: mainStepsearchFoundCount++,
                 }),
                 () => {
                   findMain(mainStepsearchFoundCount);
-                  refreshMainSteps();
                 }
               );
             }}
