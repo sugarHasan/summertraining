@@ -65,3 +65,7 @@ I added tracing. You can go next or prev steps and current step is highlighted a
 7:00 - 4:20
 Watch a lot of tutorial about drag and drop. In order to implement Drag and Drop, all libraries should be up to date. However, mines are very old like 3 years old updates. So, I updated all libraries, added srs file that stores necessary files. Package are updated. Only this takes so much time. As a result of updates, error messages is decreased and understandable error messages appeared. I hope that will help my team members to implement drag and drop but probably I will do the implementation, again.
 Also, fix id problem there is no problem left when you do add and remove steps. I tried to fix when id updated when steps are moved somewhere to another. I was trying to that by recursion by I found out that recursion is not passing steps in each recursive step. So, I will approach this problem by doing loop instead of recursion.
+
+11.08.2020
+8:00 - 3:45
+And finally I able to solve id problem completely. I found out that recursive isnt the problem. Problem was I was trying to change flatdata which is used for just for printing and I just realise that. So, working the treedata instead of flatdata solve the problem. But still with treedata, there were tons of problems. Thats why it did take long time today. Also, we have tried to solve(mostly me) this id problem since at the beginning so it is kinda relief that I solved it. Good for me! Yeey!
