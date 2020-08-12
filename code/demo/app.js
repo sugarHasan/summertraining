@@ -1,4 +1,5 @@
 import React, { Component, Children } from "react";
+
 //import SortableTree, { addNodeUnderParent, removeNodeAtPath } from '../src';
 import SortableTree, {
   addNodeUnderParent,
@@ -8,7 +9,8 @@ import SortableTree, {
   getFlatDataFromTree,
   getTreeFromFlatData,
   SortableTreeWithoutDndContext,
-} from "react-sortable-tree";
+} from "../src";
+
 import CustomTheme from "../index";
 import "react-sortable-tree/style.css";
 import "./app.css";
@@ -17,7 +19,7 @@ import TextareaAutosize from "react-autosize-textarea";
 import { node } from "prop-types";
 import PropTypes from "prop-types";
 import { DndProvider, DragSource } from "react-dnd";
-import HTML5Backend from "react-dnd-html5-backend";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 //this part is for drag and drop external steps like for loop, while loop, if vs. But not working correctly
 
@@ -260,7 +262,6 @@ class App extends Component {
               >
                 Prev Step
               </button>
-
               <button
                 type="submit"
                 disabled={!traceFoundCount}
@@ -268,7 +269,6 @@ class App extends Component {
               >
                 Next Step
               </button>
-
               <span>
                 &nbsp;/ Main Step Number: &nbsp;
                 {mainStepsearchFoundCount || 0}
@@ -279,6 +279,7 @@ class App extends Component {
               </span>
             </form>
           </div>
+
           <div style={{ flex: "1 0 50%", padding: "0 0 0 15px" }}>
             <SortableTree
               theme={CustomTheme} //theme of nodes
@@ -501,7 +502,14 @@ class App extends Component {
               }
             />
           </div>
-
+          <DndProvider backend={HTML5Backend}>
+            <div>
+              <YourExternalNodeComponent
+                node={{ title: "If ...then, do..." }}
+              />
+              ← drag this
+            </div>
+          </DndProvider>
           <button
             //add main step button
             onClick={() => {
@@ -565,6 +573,7 @@ class App extends Component {
             </ul>
           </div>
         </div>
+        );
       </div>
     );
   }
