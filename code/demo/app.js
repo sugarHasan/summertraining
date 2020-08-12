@@ -359,6 +359,9 @@ class App extends Component {
                     }
                   }
                   findMain();
+
+                  if (node.title == "If") {
+                  }
                 }}
                 //console log testing when node is being hold
                 onDragStateChanged={(args) =>
@@ -376,7 +379,8 @@ class App extends Component {
                 generateNodeProps={({ node, path }) => ({
                   title: (
                     <label>
-                      {node.id}
+                      {node.id} {node.title == "If" ? "If" : null}{" "}
+                      {node.title == "While" ? "While" : null}
                       <TextareaAutosize
                         style={{ fontSize: "1.1rem" }}
                         value={node.name}
@@ -411,7 +415,6 @@ class App extends Component {
                                 //setting new nodes title which is empty space
                                 title: (
                                   <label>
-                                    {node.id}
                                     <TextareaAutosize
                                       style={{ fontSize: "1.1rem" }}
                                       value={node.name}
@@ -495,13 +498,10 @@ class App extends Component {
               />
             </div>
             <div>
-              <YourExternalNodeComponent
-                node={{ title: "If ...then, do..." }}
-              />
-              ← drag this
+              <YourExternalNodeComponent node={{ title: "If" }} />← drag this
             </div>
             <div>
-              <YourExternalNodeComponent node={{ title: "while" }} />← drag this
+              <YourExternalNodeComponent node={{ title: "While" }} />← drag this
             </div>
           </DndProvider>
 
