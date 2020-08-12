@@ -50,7 +50,7 @@ class externalNodeBaseComponent extends Component {
       <div
         style={{
           display: "inline-block",
-          padding: "3px 5px",
+          padding: "5px 5px",
           background: "blue",
           color: "white",
         }}
@@ -504,6 +504,13 @@ class App extends Component {
           </div>
           <DndProvider backend={HTML5Backend}>
             <div>
+              <div style={{ height: 300 }}>
+                <SortableTree
+                  treeData={this.state.treeData}
+                  onChange={(treeData) => this.setState({ treeData })}
+                  dndType={externalNodeType}
+                />
+              </div>
               <YourExternalNodeComponent
                 node={{ title: "If ...then, do..." }}
               />
