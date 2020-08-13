@@ -93,7 +93,8 @@ class App extends Component {
       lastMoveNode: null,
       traceFocusIndex: 0, //step tracing
       traceFoundCount: null,
-
+      prevSelectedText: "",
+      index: 0,
       //treedata where all nodes information are stored. It is not global data so be careful
       treeData: getTreeFromFlatData({
         flatData: initialData.map((node) => ({
@@ -148,6 +149,10 @@ class App extends Component {
       mainsearchString,
       traceFocusIndex,
       traceFoundCount,
+      prevSelectedText,
+      selectedText,
+      arr = [],
+      index = 0,
     } = this.state;
 
     //for testing in console
@@ -158,8 +163,6 @@ class App extends Component {
 
     const getNodeKey = ({ treeIndex }) => treeIndex;
 
-    var prevSelectedText;
-    var selectedText;
     /*
     document.onmouseup = () => {
       console.log(window.getSelection().toString());
@@ -241,7 +244,6 @@ class App extends Component {
             ? (traceFocusIndex + 1) % traceFoundCount
             : 0,
       });
-
     document.onmouseup = () => {
       if (
         selectedText != null ||
@@ -264,6 +266,13 @@ class App extends Component {
         selectedText != ""
       )
         console.log(prevSelectedText);
+      arr[index] = prevSelectedText;
+      this.setState({ index: this.state.index + 1 });
+      console.log("index: ", index);
+      console.log(arr);
+      this.setState({
+        arrayVal: arr[index],
+      });
     };
 
     return (
@@ -538,6 +547,7 @@ class App extends Component {
                 })}
               />
             </div>
+
             <div>
               <YourExternalNodeComponent node={{ title: "If" }} />← drag this
             </div>
@@ -560,7 +570,6 @@ class App extends Component {
               }
             />
           </div>
-
           <button
             //add main step button
             onClick={() => {
@@ -615,6 +624,13 @@ class App extends Component {
               }
             />
           </label>
+          <div>
+            <li> Variables</li>
+
+            <ul>
+              <li> {this.state.arrayVal}</li>
+            </ul>
+          </div>
           <div>
             ↓PseudoCode↓
             <ul>
