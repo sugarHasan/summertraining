@@ -203,7 +203,7 @@ class App extends Component {
       });
     };
 
-    //recussion function that do recursive thought the all nodes in flat data and fix their ids. It should work if I am correct but I couldnt test it because main and sub step ids are not refreshing on time
+    //recussion function that do recursive thought the all nodes in flat data and fix their ids.
     const refreshIndexes = (n, parentId, depth, childNum) => {
       if (n == null || n == undefined) return;
 
