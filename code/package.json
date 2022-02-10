@@ -80,7 +80,7 @@
     "html-webpack-plugin": "^2.30.1",
     "identity-obj-proxy": "^3.0.0",
     "json-loader": "^0.5.4",
-    "node-sass": "^4.9.2",
+    "node-sass": "^7.0.0",
     "postcss-loader": "^2.0.9",
     "react-sortable-tree": "2.2.0",
     "sass-loader": "^6.0.6",
